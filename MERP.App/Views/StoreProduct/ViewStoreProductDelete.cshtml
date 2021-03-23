@@ -1,0 +1,233 @@
+﻿
+@{
+    ViewBag.Title = "ViewStoreInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody">
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="txtStoreName">Store Name</label>
+            <input type="text" class="form-control col-md-12" id="txtStoreName" disabled>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtStoreCode">Code</label>
+            <input type="text" class="form-control col-md-12" id="txtStoreCode" disabled>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtShortName">Short Name</label>
+            <input type="text" class="form-control col-md-12" id="txtShortName" disabled>
+        </div>
+        <div class="form-group col-md-5">
+            <label for="txtAddress">Address</label>
+            <input type="text" class="form-control col-md-12" id="txtAddress" disabled>
+        </div>
+    </div>
+
+</div>
+<div id="pPanel" class="easyui-panel" title="Add Into Store" style="width:100%;padding:15px;">
+    <div class="form-row">
+        <div class="input-group col-md-6">
+            <input type="hidden" id="txtProductID">
+            <label for="txtProductName" class="col-md-12" style="font-weight:bold">Product Name</label>
+            <input type="text" id="txtProductName" class="form-control" placeholder="Please Load Product" disabled>
+            <div class="input-group-append">
+                <button id="btnClear" type="button" class="btn btn-danger form-control" onclick="RefreshStoreProduct(null)" aria-label="Left Align">Clear</button>
+                <button id="btnLoad" type="button" class="btn btn-success form-control" aria-label="Left Align">Load</button>
+            </div>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtPreviousGoodQty" style="color:forestgreen; font-weight:bold">Previous Good Qty :</label>
+            <input type="text" class="form-control col-md-12" id="txtPreviousGoodQty" style="text-align:right" disabled>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtPreviousFaultyQty" style="color:red; font-weight:bold">Previous Faulty Qty :</label>
+            <input type="text" class="form-control col-md-12" id="txtPreviousFaultyQty" style="text-align:right" disabled>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtPreviousScrapQty" style="color:red; font-weight:bold">Previous Scrap Qty :</label>
+            <input type="text" class="form-control col-md-12" id="txtPreviousScrapQty" style="text-align:right" disabled>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtGoodQty" style="color:forestgreen; font-weight:bold">Good Qty :</label>
+            <input type="text" class="form-control col-md-12" id="txtGoodQty" style="text-align:right">
+        </div>
+        <div class="form-group col-md-2">
+            <label for="cboMedia" style="font-weight:bold">Media :</label>
+            <select class="form-control col-md-12" id="cboMedia">
+                <option value="0">--Select One--</option>
+                <option value="1">Supplier</option>
+                <option value="2">Store</option>
+            </select>
+        </div>
+        <div class="form-group col-md-3">
+            <label id="lblName"></label>
+            <select class="form-control col-md-12" id="cboPersons"></select>
+            <select class="form-control col-md-12" id="cboStoreInfos"></select>
+        </div>
+    </div>
+</div>
+
+<div class="form-row PageActionButton">
+    <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Add Into Store</button>
+    <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+</div>
+<div id="winEdit" class="easyui-window" title="Product List" data-options="modal:true,closed:true,border:'thin',cls:'c6'" style="width:700px; height:500px;">
+    <table id="tblProductInfos" class="easyui-datagrid" style="width:100%; height:400px"
+           data-options="
+                rownumbers:true,
+                singleSelect:true,
+                collapsible:false,
+                toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'ProductName', width:320, align:'left'">Product Name</th>
+                <th data-options="field:'ProductCode', width:120, align:'center'">Code</th>
+                <th data-options="field:'ShortName', width:200, align:'left'">Short Name</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="input-group col-md-12" style="padding:10px">
+            <input type="text" id="txtSearch" class="form-control col-md-8" placeholder="Search Products By Name, Code, Short Name">
+            <div class="input-group-append">
+                @*<button id="btnWinClear" type="button" class="btn btn-danger form-control" aria-label="Left Align">Clear</button>*@
+                <button id="btnWinSearch" type="button" class="btn btn-success form-control" onclick="SearchProduct()" aria-label="Left Align">Search</button>
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-md-12">
+        <button id="btnWinSelect" type="button" class="btn btn-success ActionButton" style="float:right" aria-label="Left Align">Select</button>
+        <button id="btnWinClose" type="button" class="btn btn-danger ActionButton" style="float:right" aria-label="Left Align">Close</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oStoreInfo = [];
+    var _oStoreProducts = [];
+    var _oPersonInfos = [];
+    var _oStoreInfos = [];
+    var _oStoreProductID = 0;
+    $(document).ready(function () {
+        _oStoreInfo = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.StoreInfo));
+        _oStoreProducts = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.StoreProducts));
+        _oPersonInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.PersonInfos));
+        _oStoreInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.StoreInfos));
+
+        RefreshComponents(_oStoreInfo);
+        SetPageHeader('Store Product Details');
+        SetPanelHeader('pPanel', 'Add Into Store', 'palegreen');
+        MLoadComboBoxWithSelect('cboPersons', _oPersonInfos);
+        MLoadComboBoxWithSelect('cboStoreInfos', _oStoreInfos);
+        $('#cboPersons').hide();
+        $('#cboStoreInfos').hide();
+    });
+    function RefreshComponents(obj) {
+        if (obj.MModelPK > 0) {
+            $('#txtStoreName').val(obj.StoreName);
+            $('#txtStoreCode').val(obj.StoreCode);
+            $('#txtShortName').val(obj.ShortName);
+            $('#txtStoreName').val(obj.StoreName);
+            $('#txtAddress').val(obj.Address);
+            MLoadDataGrid('tblStoreProducts', _oStoreProducts, '');
+        }
+    }
+    function RefreshObject() {
+        var oDataObject = {
+            ErrorMessage: "DELETE",
+            StoreProductID: _oStoreProductID,
+            StoreID: _oStoreInfo.StoreID,
+            ProductID: $('#txtProductID').val(),
+            GoodQty: $('#txtGoodQty').val(),
+            SupplierID: $('#cboPersons').val(),
+            TransitStoreID: $('#cboStoreInfos').val()
+        };
+        return oDataObject;
+    }
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            SearchProduct();
+        }
+    });
+    function SearchProduct() {
+        MGeneralAjaxWithReturnFn_MaxJson({ ErrorMessage: $('#txtSearch').val() }, 'ProductInfo', 'SearchByProductNameAndCode', 'LoadProduct');
+    }
+    $('#btnLoad').click(function (e) {
+        MWinPickerOpen(1, 'tblProductTypes', 'winEdit', 'ResetWinPicker');
+    });
+    function ResetWinPicker() {
+        $('#txtSearch').val('');
+        MLoadDataGrid('tblProductInfos', [], '');
+    }
+    function LoadProduct(obj) {
+        if (obj.length == 0) {
+            MSWAL('No Date', 'No Data Found', 'warning');
+        }
+        else {
+            MLoadDataGrid('tblProductInfos', obj, '');
+        }
+    }
+    $('#btnWinSelect').click(function (e) {
+        var oObj = MSelect('tblProductInfos');
+        if (oObj.MModelPK > 0) {
+            $('#txtProductID').val(oObj.ProductID);
+            $('#txtProductName').val(oObj.ProductName);
+            $('#winEdit').window('close');
+            MGeneralAjaxWithReturnFn({ StoreID: _oStoreInfo.StoreID, ProductID: oObj.ProductID }, 'StoreProduct', 'GetStoreProductByStoreAndProductID', 'RefreshStoreProduct');
+        }
+    });
+    function RefreshStoreProduct(obj) {
+        if (obj != null) {
+            _oStoreProductID = obj.StoreProductID;
+            $('#txtPreviousGoodQty').val(obj.GoodQty);
+            $('#txtPreviousFaultyQty').val(obj.FaultyQty);
+            $('#txtPreviousScrapQty').val(obj.ScrapQty);
+        }
+        else {
+            _oStoreProductID = 0;
+            $('#txtPreviousGoodQty').val(0);
+            $('#txtPreviousFaultyQty').val(0);
+            $('#txtPreviousScrapQty').val(0);
+            $('#txtProductID').val(0);
+            $('#txtProductName').val('');
+        }
+    }
+    $('#btnWinClose').click(function (e) {
+        $('#winEdit').window('close');
+    });
+    $('#cboMedia').change(function (e) {
+        if ($('#cboMedia').val() == 0) {
+            $('#lblName').html('');
+            $('#cboPersons').val(0);
+            $('#cboStoreInfos').val(0);
+            $('#cboPersons').hide();
+            $('#cboStoreInfos').hide();
+        }
+        if ($('#cboMedia').val() == 1) {
+            $('#lblName').html('Supplier Name');
+            $('#cboPersons').val(0);
+            $('#cboStoreInfos').val(0);
+            $('#cboPersons').show();
+            $('#cboStoreInfos').hide();
+        }
+        if ($('#cboMedia').val() == 2) {
+            $('#lblName').html('Store Name');
+            $('#cboPersons').val(0);
+            $('#cboStoreInfos').val(0);
+            $('#cboPersons').hide();
+            $('#cboStoreInfos').show();
+        }
+    });
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'StoreProduct', 'Save');
+    });
+</script>
+
+
+
+
+
+
+

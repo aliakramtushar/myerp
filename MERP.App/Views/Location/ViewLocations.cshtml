@@ -1,0 +1,59 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblLocations" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'LocationName', width:200, align:'left'">Location</th>
+                <th data-options="field:'DivisionName', width:200, align:'left'">Division </th>
+                <th data-options="field:'DistrictName', width:200, align:'left'">District</th>
+                <th data-options="field:'ActivityStatusSt', width:150, align:'center'">Status</th>
+                <th data-options="field:'Remarks', width:150, align:'center'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oLocations = [];
+    $(document).ready(function () {
+        debugger;
+        _oLocations = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Locations));
+        MLoadDataGrid('tblLocations', _oLocations, 'Location List', 100, 'cboPagination');
+        SetPageHeader('Location Setup');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblLocations', 'Location', 'ViewLocation');
+    });
+    $('#btnEdit').click(function (e) {
+        MEdit('tblLocations', 'Location', 'ViewLocation');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblLocations', 'Location', 'Delete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblLocations', 'txtSearch', 'Location', 'Search');     // only for Enter Press
+        }
+    });
+</script>
+
+
+
+
+
+

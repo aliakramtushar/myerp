@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewBag.Title = "ViewTrainingInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody" style="background-color: lavender">
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="txtTrainingCode">Training Code</label>
+            <input type="text" class="form-control col-md-12" id="txtTrainingCode">
+        </div>
+        <div class="form-group col-md-9">
+            <label for="txtTrainingName">Training Name</label>
+            <input type="text" class="form-control col-md-12" id="txtTrainingName">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="cboTrainingTypes">Training Type</label>
+            <select id="cboTrainingTypes" class="form-control col-md-12"></select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="txtDurationInMonth">Duration (In Month)</label>
+            <input type="number" class="form-control col-md-12" id="txtDurationInMonth">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="cboActivityStatus">Activity Status</label>
+            <select id="cboActivityStatus" class="form-control col-md-12"></select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="txtDurationInMonth" style="color:forestgreen; font-weight:bold">Amount (Taka)</label>
+            <input type="number" class="form-control col-md-12" id="txtAmount">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="txtDescription">Description</label>
+            <textarea class="form-control col-md-12" id="txtDescription" placeholder="Optional"></textarea>
+        </div>
+    </div>
+
+</div>
+<div class="form-row PageActionButton">
+    <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+    <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+</div>
+<script type="text/javascript">
+        var _oTrainingInfo = [];
+    var _oTrainingTypes = [];
+    var _oActivityStatus = [];
+
+        $(document).ready(function () {
+            debugger;
+            SetPageHeader('Bank Account Mapping Entry');
+            _oTrainingInfo = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.TrainingInfo));
+            _oTrainingTypes = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.TrainingTypes));
+            _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+
+            MLoadComboBox('cboTrainingTypes', _oTrainingTypes);
+            MLoadComboBox('cboActivityStatus', _oActivityStatus);
+            RefreshComponents(_oTrainingInfo);
+            SetPageHeader('TrainingInfo Information');
+        });
+        function RefreshComponents(obj) {
+            if (obj == null) {
+                $('#txtTrainingID').val(0);
+                $('#txtTrainingCode').val('');
+                $('#txtTrainingName').val('');
+                $('#cboTrainingTypes').val(0);
+                $('#txtDescription').val('');
+                $('#txtDurationInMonth').val(0);
+                $('#cboActivityStatus').val(0);
+                $('#txtAmount').val(0);
+            }
+            else {
+                $('#txtTrainingID').val(obj.TrainingID);
+                $('#txtTrainingCode').val(obj.TrainingCode);
+                $('#txtTrainingName').val(obj.TrainingName);
+                $('#cboTrainingTypes').val(obj.TrainingType);
+                $('#txtDescription').val(obj.Description);
+                $('#txtDurationInMonth').val(obj.DurationInMonth);
+                $('#cboActivityStatus').val(obj.ActivityStatus);
+                $('#txtAmount').val(obj.Amount);
+            }
+        }
+        function RefreshObject() {
+            debugger;
+            var oDataObject = {
+                TrainingID: _oTrainingInfo.TrainingID,
+                TrainingCode: $('#txtTrainingCode').val(),
+                TrainingName: $('#txtTrainingName').val(),
+                TrainingType: $('#cboTrainingTypes').val(),
+                Description: $('#txtDescription').val(),
+                DurationInMonth: $('#txtDurationInMonth').val(),
+                ActivityStatus: $('#cboActivityStatus').val(),
+                Amount: $('#txtAmount').val(),
+            };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'TrainingInfo', 'Save');
+    });
+</script>
+
+
+
+
+
+
+

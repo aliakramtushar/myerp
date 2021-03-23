@@ -1,0 +1,107 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody" style="background: #abbaab; background: -webkit-linear-gradient(to right, #ffffff, #abbaab); background: linear-gradient(to right, #ffffff, #abbaab);">
+    <div class="col-md-12 row">
+        <label for="txtLSOCheck" class="form-control-sm" style="font-size:25px;font-weight: bold">Check Sales Report LSO Data : </label>
+        <input type="text" class="form-control-sm" id="txtLSOCheck" style="font-size:25px" placeholder="Please Type LSO Code" />
+        <button id="btnGet" onclick="GetData()" type="button" class="btn btn-success form-control-sm" style="font-size:25px; margin-left: 10px" aria-label="Left Align">Get Data</button>
+    </div>
+</div>
+<div class="easyui-accordion" data-options="selected:false" style="width:100%">
+    <div title="Re-Generate LSO bill for Sales Details & Deposit" style="overflow:auto;">
+        <div class="PageBody" style="background: #FFEFBA; /* fallback for old browsers */ background: -webkit-linear-gradient(to right, #FFFFFF, #FFEFBA); /* Chrome 10-25, Safari 5.1-6 */ background: linear-gradient(to right, #FFFFFF, #FFEFBA); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */ ">
+            <div class="col-md-12 row">
+                <label for="txtLSOGenerate" class="form-control-sm" style="font-size:25px;font-weight: bold">Update Sales Report LSO Data : </label>
+                <input type="text" class="form-control-sm" id="txtLSOGenerate" style="font-size:25px" placeholder="Please Type LSO Code" />
+                <button id="btnUpdate" onclick="UpdateData()" type="button" class="btn btn-success form-control-sm" style="font-size:25px; margin-left: 10px" aria-label="Left Align">Update Data</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table id="tblNWRDirectSalesDetails" class="easyui-datagrid" style="width:100%"
+       data-options="
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar',
+    rownumbers:true,
+    onDblClickRow:function(){FnBankDeposit()}">
+    <thead>
+        <tr>
+            <th data-options="field:'DepositDateSt', width:120, align:'center'">Deposit Date</th>
+            <th data-options="field:'BusinessUnitName', width:180, align:'left'">Project Name</th>
+            <th data-options="field:'LSOCode', width:150, align:'left'">LSO Code</th>
+            <th data-options="field:'InvoiceNo', width:150, align:'left'">Invoice No</th>
+            <th data-options="field:'InvoiceDateSt', width:120, align:'center'">Invoice Date</th>
+            <th data-options="field:'ShortName', width:100, align:'center'">Short Name</th>
+            <th data-options="field:'SKUName', width:120, align:'left'">SKU Name</th>
+            <th data-options="field:'SKUPrice', width:90, align:'right'">SKU Price</th>
+            <th data-options="field:'ExchangeReplaceCharge', width:120, align:'right'">Exchange Charge</th>
+            <th data-options="field:'BackupHSCharge', width:120, align:'right'">Backup Charge</th>
+            <th data-options="field:'ServiceChargeAmount', width:120, align:'right'">Service Charge</th>
+            <th data-options="field:'TotalAmount', width:120, align:'right'">Total Amount</th>
+            <th data-options="field:'DiscountedAmount', width:130, align:'right'">Discounted Amount</th>
+            <th data-options="field:'CollectedAmount', width:130, align:'right'">Collected Amount</th>
+            <th data-options="field:'IscashDeposited', width:120, align:'center'">Is Cash Deposit</th>
+            <th data-options="field:'AddedBy', width:120, align:'left'">Added By</th>
+        </tr>
+    </thead>
+</table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%; padding:5px">
+            
+            <button id="btnDepositDetails" onclick="FnBankDeposit()" type="button" class="btn btn-success form-control-sm easyui-tooltip" title="See the deposit details of this LSO" aria-label="Left Align">Deposit Details</button>
+        </div>
+    </div>
+<script type="text/javascript">
+    var _oBankDeposits = [];
+    $(document).ready(function () {
+        SetPageHeader('LSO Bank Deposit Check Panel');
+        $('#dtDepositStartDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+        $('#dtDepositEndDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+    });
+    function GetData() {
+        MSearch('tblNWRDirectSalesDetails', 'txtLSOCheck', 'BankDeposit', 'GetNWRSalesDetailsByLSO');
+    }
+    function UpdateData() {
+        debugger;
+        if ($('#txtLSOGenerate').val() == '') {
+            MSWAL_WithFocus('No Data', 'Please Give the LSO Code', 'error', 'txtLSOGenerate');
+            return;
+        }
+        else { MSWAL_WithReturnMSWAL2('Warning', 'Are you want to update bill of this LSO - ' + $('#txtLSOGenerate').val(), 'warning', true, true, 'ReturnFunction'); }
+    }
+    function ReturnFunction() {
+        MGeneralAjaxWithReturnFn({ ErrorMessage: $("#txtLSOGenerate").val() }, 'BankDeposit', 'GenerateNWRSalesDetailsByLSO', 'LSOGenerate');
+    }
+    function LSOGenerate(obj) {
+        debugger;
+        if (obj.length > 0) {
+            if (obj[0].ErrorMessage == "") {
+                MSWAL('Success', 'Data Updated', 'success');
+                MLoadDataGrid('tblNWRDirectSalesDetails', obj, '');
+            }
+            else {
+                MSWAL('Error', obj[0].ErrorMessage, 'warning');
+                MLoadDataGrid('tblNWRDirectSalesDetails', [], '');
+            }
+        }
+    }
+    function FnBankDeposit() {
+        var obj = $('#tblNWRDirectSalesDetails').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('error', 'Please select an item from list!', 'info');
+            return false;
+        }
+        obj.MModelPK = obj.BankDepositID;
+        MEdit('tblNWRDirectSalesDetails', 'BankDeposit', 'ViewBankDepositEdit');
+    }
+</script>
+
+
+
+
+
+
+

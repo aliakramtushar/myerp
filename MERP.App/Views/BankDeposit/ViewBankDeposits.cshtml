@@ -1,0 +1,154 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblBankDeposits" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar',
+           multiSort:true,
+    @*rowStyler:function(index,row){
+        if(row.StatusSt == 'Approved'){return 'background-color:green;color:white;font-weight:bold;';}
+        if(row.StatusSt == 'Rejected'){return 'background-color:pink;color:white;font-weight:bold;';}
+    },*@
+    onClickRow:function(index,row){OnClickRow(index,row)},
+    onDblClickRow:function(){ViewChild()}">
+        <thead>
+            <tr>
+                <th data-options="field:'DepositDateSt', width:120, align:'center',">Deposit Date</th>
+                <th data-options="field:'DepositCode', width:170, align:'center'">Deposit Code</th>
+                <th data-options="field:'BranchName', width:120, align:'center',sortable:'true',order:'asc'">Branch Name</th>
+                <th data-options="field:'BankName', width:220, align:'left'">Bank Name</th>
+                <th data-options="field:'BankAccountNo', width:150, align:'left'">Account No</th>
+                <th data-options="field:'TotalDepositAmount', width:100, align:'right'">Amount</th>
+                <th data-options="field:'StatusSt', width:120, align:'center'">Status</th>
+                <th data-options="field:'ApprovedBy', width:120, align:'center'">Approved By</th>
+                <th data-options="field:'ApprovedByDateSt', width:120, align:'center'">Approved Date</th>
+                <th data-options="field:'RefNo', width:150, align:'left'">Ref No</th>
+                <th data-options="field:'Remarks', width:250, align:'left'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <label for="dtDepositStartDate">Deposit Date :</label>
+            <input class="easyui-datebox" id="dtDepositStartDate" data-options="formatter:MDateFormatter,parser:MParser" style="width:120px">
+            <label for="dtDepositEndDate">To</label>
+            <input class="easyui-datebox" id="dtDepositEndDate" data-options="formatter:MDateFormatter,parser:MParser" style="width: 120px">
+            <a id="btnSearch" class="easyui-linkbutton easyui-tooltip" title="Search With Date Range" data-options="plain:true,iconCls:'icon-search'"></a>
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnView" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-more'">View</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <a id="btnApprove" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">Approve</a>
+            <a id="btnExcel" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-excel'">Excel</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<div id="winViewChild" class="easyui-window" title="View Summary" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:450px; height:250px;">
+    <div>
+        <table id="tblBankDepositDetails" class="easyui-datagrid" style="width:100%"
+               data-options="
+                    rownumbers:true,
+                    singleSelect:true,
+                    collapsible:false">
+            <thead>
+                <tr>
+                    <th data-options="field:'BusinessUnitName', width:250, align:'left'">Project Name</th>
+                    <th data-options="field:'Remarks', width:150, align:'right'">Deposit Amount</th>
+                </tr>
+            </thead>
+        </table>
+
+    </div>
+</div>
+<script type="text/javascript">
+    var _oBankDeposits = [];
+    $(document).ready(function () {
+        debugger;
+        SetPageHeader('Bank Account Mapping Setup');
+        _oBankDeposits = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankDeposits));
+        MObjList = _oBankDeposits;
+        MLoadDataGrid('tblBankDeposits', _oBankDeposits, 'BankDeposit List', 100, 'cboPagination');
+        $('#dtDepositStartDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+        $('#dtDepositEndDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblBankDeposits', MObjList, 100, 'cboPagination');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblBankDeposits', 'BankDeposit', 'ViewBankDeposit');
+    });
+    $("#btnDelete").click(function () {
+        MDelete('tblBankDeposits', 'BankDeposit', 'Delete');
+    });
+    $("#btnApprove").click(function () {
+        sessionStorage.setItem('PageAction', 'Approve');
+        MEdit('tblBankDeposits', 'BankDeposit', 'ViewBankDepositEdit');
+    });
+    $("#btnView").click(function () {
+        sessionStorage.setItem('PageAction', 'View');
+        MEdit('tblBankDeposits', 'BankDeposit', 'ViewBankDepositEdit');
+    });
+    $("#btnSearch").click(function () {
+        var obj = {
+            ErrorMessage: $('#txtSearch').val() + '~' + 'true' + '~' + $('#dtDepositStartDate').datebox('getValue') + '~' + $('#dtDepositEndDate').datebox('getValue')
+        }
+        MGetsTable(obj, 'BankDeposit', 'Search', 'tblBankDeposits', '', 100, 'cboPagination');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            var obj = {
+                ErrorMessage: $('#txtSearch').val() + '~' + 'false' + '~' + $('#dtDepositStartDate').datebox('getValue') + '~' + $('#dtDepositEndDate').datebox('getValue')
+            }
+            MGetsTable(obj, 'BankDeposit', 'Search', 'tblBankDeposits', '', 100, 'cboPagination');
+        }
+    });
+    function OnClickRow(index, row) {
+        $("#btnDelete").hide();
+        $("#btnApprove").hide();
+        if (row.Status == 0) {
+            $("#btnDelete").show();
+            $("#btnApprove").show();
+        }
+        if (row.Status == 1) {
+            $("#btnDelete").hide();
+            $("#btnApprove").hide();
+        }
+        if (row.Status == 2) {
+            $("#btnDelete").show();
+            $("#btnApprove").hide();
+        }
+    }
+    function ViewChild() {
+        var obj = $('#tblBankDeposits').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('error', 'Please select an item from list!', 'info');
+            return false;
+        }
+        $('#winViewChild').window('open');
+        MLoadDataGridByParentID('tblBankDepositDetails', obj.BankDepositID, 'BankDeposit', 'GetsSaleProjectWise');
+    }
+    $("#btnExcel").click(function () {
+        var oColList = [
+            { headertext: 'Deposit Date', datatype: 'string', datafield: 'DepositDateSt' },
+            { headertext: 'Branch Name', datatype: 'string', datafield: 'BranchName' },
+            { headertext: 'Bank Name', datatype: 'string', datafield: 'BankName' },
+            { headertext: 'Bank Account No', datatype: 'string', datafield: 'BankAccountNo' },
+            { headertext: 'Total Deposit Amount', datatype: 'string', datafield: 'TotalDepositAmount' },
+            { headertext: 'Status', datatype: 'string', datafield: 'StatusSt' },
+            { headertext: 'Ref No', datatype: 'string', datafield: 'RefNo' },
+            { headertext: 'Remarks', datatype: 'string', datafield: 'Remarks' }
+        ]
+        MObjList.filter(x => x.StatusSt = 'Approved');
+        MExcelCustom(MObjList, oColList, 'Bank Deposit Summary');
+    });
+</script>
+
+
+
+

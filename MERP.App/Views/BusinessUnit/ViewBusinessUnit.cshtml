@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewBag.Title = "ViewBusinessUnit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody">
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="txtBusinessUnitName">Business Unit Name</label>
+            <input type="text" class="form-control col-md-12" id="txtBusinessUnitName">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="cboCompanys">Company Name</label>
+            <select id="cboCompanys" class="form-control col-md-12"></select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="txtBusinessOwnerName">Business Owner Name</label>
+            <input type="text" class="form-control col-md-12" id="txtBusinessOwnerName" disabled placeholder="From Database">
+        </div>
+        <div class="form-group col-md-12">
+            <label class="form-check-label" for="chkIsAuto">Is Auto Process</label>
+            <input class="form-check-input col-md-2" type="checkbox" id="chkIsAuto">
+        </div>
+        <div class="form-group col-md-12">
+            <label class="form-check-label" for="chkIsManual">Is Manual</label>
+            <input class="form-check-input col-md-2" type="checkbox" id="chkIsManual">
+        </div>
+        <div class="form-group col-md-12">
+            <label class="form-check-label" for="chkIsInActive">Is InActive</label>
+            <input class="form-check-input col-md-2" type="checkbox" id="chkIsInActive">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="txtRemarks">Remarks</label>
+            <input type="text" class="form-control col-md-12" id="txtRemarks" placeholder="Optional">
+        </div>
+    </div>
+    <div class="form-row PageActionButton">
+        <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+        <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+    </div>
+</div>
+<script type="text/javascript">
+        var _oBusinessUnit = [];
+        var _oCompanys = [];
+
+        $(document).ready(function () {
+            debugger;
+            SetPageHeader('Bank Account Mapping Entry');
+            _oBusinessUnit = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BusinessUnit));
+            _oCompanys = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.CompanyInfos));
+
+            MLoadComboBoxWithSelect('cboCompanys', _oCompanys);
+            RefreshComponents(_oBusinessUnit);
+            SetPageHeader('BusinessUnit Information');
+        });
+        function RefreshComponents(obj) {
+            if (obj == null) {
+                $('#txtBusinessUnitName').val('');
+                $('#cboCompanys').val(0);
+                $('#txtBusinessOwnerName').val('');
+                $('#chkIsInActive').prop('checked', false);
+                $('#chkIsAuto').prop('checked', false);
+                $('#chkIsManual').prop('checked', false);
+
+                $('#txtRemarks').val('');
+            }
+            else {
+                $('#txtBusinessUnitName').val(obj.BusinessUnitName);
+                $('#cboCompanys').val(obj.CompanyID);
+                $('#txtBusinessOwnerName').val(obj.BusinessOwnerName);
+                $('#chkIsInActive').prop('checked', obj.IsInActive);
+                $('#chkIsAuto').prop('checked', obj.IsAuto);
+                $('#chkIsManual').prop('checked', obj.IsManual);
+
+                $('#txtRemarks').val(obj.Remarks);
+            }
+        }
+        function RefreshObject() {
+            debugger;
+            var oDataObject = {
+                BusinessUnitID: _oBusinessUnit.BusinessUnitID,
+                BusinessUnitName: $('#txtBusinessUnitName').val(),
+                CompanyID : $('#cboCompanys').val(),
+                BusinessOwnerName: $('#txtBusinessOwnerName').val(),
+                IsInActive: $('#chkIsInActive').prop('checked'),
+                IsAuto: $('#chkIsAuto').prop('checked'),
+                IsManual: $('#chkIsManual').prop('checked'),
+                Remarks : $('#txtRemarks').val()
+            };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'BusinessUnit', 'Save');
+    });
+</script>
+
+
+
+
+
+
+

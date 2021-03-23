@@ -1,0 +1,291 @@
+﻿
+@{
+    ViewBag.Title = "ViewReportMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody" style="padding:10px">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="txtReportName">Report Name</label>
+            <input type="text" class="form-control col-md-12" id="txtReportName">
+        </div>
+        <div class="form-group col-md-2">
+            <label for="cboIsSP">Is Store Procedure</label>
+            <select id="cboIsSP" class="form-control col-md-12">
+                <option value="0">No</option>
+                <option value="1">yes</option>
+            </select>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="cboIsInActive">Is In Active</label>
+            <select id="cboIsInActive" class="form-control col-md-12">
+                <option value="0">No</option>
+                <option value="1">yes</option>
+            </select>
+        </div>
+        <div class="form-group col-md-1">
+            <label for="cboExcel">Is Excel</label>
+            <select id="cboExcel" class="form-control col-md-12">
+                <option value="0">No</option>
+                <option value="1">yes</option>
+            </select>
+        </div>
+        <div class="form-group col-md-1">
+            <label for="cboPDF">Is PDF</label>
+            <select id="cboPDF" class="form-control col-md-12">
+                <option value="0">No</option>
+                <option value="1">yes</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-7">
+            <label for="txtQuery">Query / Store Procedure Name </label>
+            <textarea class="form-control col-md-12" id="txtQuery" placeholder="Enter the whole query or Store Procedure Name Only"></textarea>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="txtRemarks">PDF File Name (Optional)</label>
+            <textarea class="form-control col-md-12" id="txtRptFileName" placeholder="Rpt Class File Name"></textarea>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtRemarks">Remarks</label>
+            <textarea class="form-control col-md-12" id="txtRemarks" placeholder="(If Any)"></textarea>
+        </div>
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-12">
+        <table id="tblReportDetails" class="easyui-datagrid" style="width:100%"
+               data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar',
+    onDblClickRow:function(){ChildEdit()}">
+            <thead>
+                <tr>
+                    <th data-options="field:'ControlTypeSt', width:150, align:'center'">Control Type</th>
+                    <th data-options="field:'ControlID', width:180, align:'left'">Control ID</th>
+                    <th data-options="field:'ControlName', width:180, align:'left'">Control Name</th>
+                    <th data-options="field:'FieldName', width:180, align:'left'">Field Name</th>
+                    <th data-options="field:'LabelName', width:180, align:'left'">Label Name</th>
+                    <th data-options="field:'Sequence', width:120, align:'center'">Sequence</th>
+                </tr>
+            </thead>
+        </table>
+        <div id="toolbar">
+            <div class="easyui-panel" style="width:100%">
+                <a id="btnAdd" class="easyui-linkbutton" data-options="plain:false,iconCls:'icon-add'">Add</a>
+                <a id="btnEdit" onclick="ChildEdit()" class="easyui-linkbutton" data-options="plain:false,iconCls:'icon-edit'">Edit</a>
+                <a id="btnDelete" class="easyui-linkbutton" data-options="plain:false,iconCls:'icon-remove'">Delete</a>
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-md-12">
+        <div class="form-group col-md-12 PageActionButton">
+            <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+            <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+        </div>
+    </div>
+</div>
+<div id="winEdit" class="easyui-window" title="Report Parameter Details" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:600px; height:320px; padding:20px">
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <input type="hidden" id="txtReportDetailID" />
+            <label for="cboControlTypes" style="font-weight:bold">Control Type</label>
+            <select id="cboControlTypes" class="form-control-sm col-md-12"></select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="txtControlName" style="font-weight:bold">Control / Table Name</label>
+            <input type="text" id="txtControlName" class="form-control-sm col-md-12">
+        </div>
+        <div class="form-group col-md-4">
+            <label for="txtControlID" style="font-weight:bold">Control ID</label>
+            <input type="text" id="txtControlID" class="form-control-sm col-md-12">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="txtFieldName" style="font-weight:bold">Field Name / (Controller/Action)</label>
+            <input type="text" id="txtFieldName" class="form-control-sm col-md-12">
+        </div>
+        <div class="form-group col-md-5">
+            <label for="txtLabelName" style="font-weight:bold">Label Name</label>
+            <input type="text" id="txtLabelName" class="form-control-sm col-md-12">
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtSequence" style="font-weight:bold">Sequence</label>
+            <input type="number" id="txtSequence" class="form-control-sm col-md-12">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group ActionButton">
+            <button id="btnWinUpdateGrid" type="button" class="btn btn-success ActionButton" >Save</button>
+            <button id="btnWinClose" type="button" class="btn btn-danger ActionButton" >Close</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oControlTypes = [];
+    var _oReportMaster = [];
+    var _oReportDetails = [];
+    var _IsWinUpdate = 0;
+
+        $(document).ready(function () {
+            debugger;
+            SetPageHeader('Report Builder');
+            _oReportMaster = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ReportMaster));
+            _oReportDetails = _oReportMaster.ReportDetails;
+            _oControlTypes = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ControlTypes));
+
+            MLoadComboBox('cboControlTypes', _oControlTypes);
+            RefreshComponents(_oReportMaster);
+            $('#cboBusinessUnits').val(0);
+        });
+    function RefreshComponents(obj)
+    {
+        if (obj.ReportMasterID == 0) {
+            $('#txtReportName').val('');
+            $('#cboIsSP').val(0);
+            $('#cboExcel').val(0);
+            $('#cboPDF').val(0);
+            $('#cboIsInActive').val(0);
+            $('#txtQuery').val('');
+            $('#txtRptFileName').val('');
+            $('#txtRemarks').val('');
+            MLoadDataGrid('tblReportDetails', [], '');
+        }
+        else {
+            $('#txtReportName').val(obj.ReportName);
+            if (obj.IsSP == true) { $('#cboIsSP').val(1) } else { $('#cboIsSP').val(0) }
+            if (obj.IsExcel == true) { $('#cboExcel').val(1) } else { $('#cboExcel').val(0) }
+            if (obj.IsPDF == true) { $('#cboPDF').val(1) } else { $('#cboPDF').val(0) }
+            if (obj.IsInActive == true) { $('#cboIsInActive').val(1) } else { $('#cboIsInActive').val(0) }
+            $('#txtQuery').val(obj.Query);
+            $('#txtRptFileName').val(obj.RptFileName);
+            $('#txtRemarks').val(obj.Remarks);
+            MLoadDataGrid('tblReportDetails', obj.ReportDetails, '');
+        }
+    }
+    function RefreshObject() {
+            var oDataObject = {
+                ReportMasterID: _oReportMaster.ReportMasterID,
+                ReportName: $('#txtReportName').val(),
+                IsSP: parseInt($('#cboIsSP').val()),
+                IsExcel: parseInt($('#cboExcel').val()),
+                IsPDF: parseInt($('#cboPDF').val()),
+                IsInActive: parseInt($('#cboIsInActive').val()),
+                Query: $('#txtQuery').val(),
+                RptFileName: $('#txtRptFileName').val(),
+                Remarks: $('#txtRemarks').val(),
+                ReportDetails: $('#tblReportDetails').datagrid('getRows')
+        };
+        debugger;
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        if ($('#txtReportName').val() == '') {
+            MSWAL_WithFocus('Warning!', 'Please Enter Report Name!!', 'error','txtReportName');
+            return;
+        }
+        if ($('#txtQuery').val() == '') {
+            MSWAL_WithFocus('Warning!', 'Please Enter the Query you Execute!!', 'error', 'txtQuery');
+            return;
+        }
+        MSave(RefreshObject(), 'ReportMaster', 'Save');
+    });
+    $('#btnAdd').click(function (e) {
+        $('#winEdit').window('open');
+        RefreshWinEdit(null);
+    });
+    $('#btnDelete').click(function (e) {
+        MDeleteOnlyFront('tblReportDetails');
+    });
+    function ChildEdit() {
+        var obj = $('#tblReportDetails').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('Warning!', 'Please select an item from list!', 'error');
+            return false;
+        }
+        $('#winEdit').window('open');
+        RefreshWinEdit(obj);
+    }
+    $('#btnWinUpdateGrid').click(function (e) {
+        if ($('#cboControlTypes').val() == 0 || $('#cboControlTypes').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please Select Control Type!!', 'error','cboControlTypes');
+            return;
+        }
+        if ($('#txtControlID').val() == '' || $('#txtControlID').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Control HTML ID!!', 'error', 'txtControlID');
+            return;
+        }
+        if ($('#txtControlName').val() == '' || $('#txtControlName').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please ENter COntrol Name!!', 'error', 'txtControlName');
+            return;
+        }
+        if ($('#txtFieldName').val() == '' || $('#txtFieldName').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Field Name!!', 'error', 'txtFieldName');
+            return;
+        }
+        if ($('#txtLabelName').val() == '' || $('#txtLabelName').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Label Name!!', 'error', 'txtLabelName');
+            return;
+        }
+        if ($('#txtSequence').val() == '' || $('#txtSequence').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please Give the Sequence!!', 'error', 'txtSequence');
+            return;
+        }
+        MAddOrUpdateDataGrid('tblReportDetails', MakeObjectChild(), _IsWinUpdate);
+        $('#winEdit').window('close');
+    });
+    $('#btnWinClose').click(function (e) {
+        RefreshWinEdit(null);
+        $('#winEdit').window('close');
+    });
+    function RefreshWinEdit(obj) {
+        if (obj != null) {
+            $('#txtReportDetailID').val(obj.ReportDetailID);
+            $('#cboControlTypes').val(obj.ControlType);
+            $('#txtControlID').val(obj.ControlID);
+            $('#txtControlName').val(obj.ControlName);
+            $('#txtFieldName').val(obj.FieldName);
+            $('#txtLabelName').val(obj.LabelName);
+            $('#txtSequence').val(obj.Sequence);
+            _IsWinUpdate = 1;
+        }
+        else {
+            $('#txtReportDetailID').val(0);
+            $('#cboControlTypes').val(0);
+            $('#txtControlID').val('');
+            $('#txtControlName').val('');
+            $('#txtFieldName').val('');
+            $('#txtLabelName').val('');
+            $('#txtSequence').val('');
+            _IsWinUpdate = 0;
+        }
+    }
+    function MakeObjectChild() {
+        var obj = {
+            ReportMasterID: _oReportMaster.ReportMasterID,
+            ReportDetailID: $('#txtReportDetailID').val(),
+            ControlType: $('#cboControlTypes').val(),
+            ControlTypeSt: $("#cboControlTypes option:selected").html(),
+            ControlID: $('#txtControlID').val(),
+            ControlName: $('#txtControlName').val(),
+            FieldName: $('#txtFieldName').val(),
+            LabelName: $('#txtLabelName').val(),
+            Sequence: $('#txtSequence').val()
+        }
+        return obj;
+    }
+</script>
+
+
+
+
+
+
+

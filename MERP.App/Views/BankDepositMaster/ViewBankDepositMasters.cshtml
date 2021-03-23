@@ -1,0 +1,117 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblBankDepositMasters" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar',
+    @*rowStyler:function(index,row){
+        if(row.StatusSt == 'Approved'){return 'background-color:green;color:white;font-weight:bold;';}
+        if(row.StatusSt == 'Rejected'){return 'background-color:pink;color:white;font-weight:bold;';}
+    },*@
+    onClickRow:function(index,row){OnClickRow(index,row)},
+    onDblClickRow:function(){ViewChild()}">
+        <thead>
+            <tr>
+                <th data-options="field:'DepositDateSt', width:120, align:'center'">Deposit Date</th>
+                <th data-options="field:'BankBranchName', width:150, align:'center'">Branch Name</th>
+                <th data-options="field:'BankName', width:200, align:'left'">Bank Name</th>
+                <th data-options="field:'BankAccountNo', width:150, align:'left'">Account No</th>
+                <th data-options="field:'TotalDepositAmountSt', width:140, align:'right'">Deposit Amount</th>
+                <th data-options="field:'StatusSt', width:120, align:'center'">Status</th>
+                <th data-options="field:'Remarks', width:250, align:'left'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <a id="btnApprove" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">Approve</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<div id="winViewChild" class="easyui-window" title="View Summary" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:670px; height:250px;">
+    <div >
+        <table id="tblBankDepositDetails" class="easyui-datagrid" style="width:100%"
+               data-options="
+                    rownumbers:true,
+                    singleSelect:true,
+                    collapsible:false">
+            <thead>
+                <tr>
+                    <th data-options="field:'BusinessUnitName', width:190, align:'center'">Project Name</th>
+                    <th data-options="field:'DepositAmountSt', width:150, align:'right'">Deposit Amount</th>
+                    <th data-options="field:'Remarks', width:270, align:'center'">Remarks</th>
+                </tr>
+            </thead>
+        </table>
+
+    </div>
+</div>
+<script type="text/javascript">
+    var _oBankDepositMasters = [];
+    $(document).ready(function () {
+        debugger;
+        SetPageHeader('Bank Account Mapping Setup');
+        _oBankDepositMasters = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankDepositMasters));
+        MLoadDataGrid('tblBankDepositMasters', _oBankDepositMasters, 'BankDepositMaster List', 100, 'cboPagination');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblBankDepositMasters', _oBankDepositMasters, 100, 'cboPagination');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblBankDepositMasters', 'BankDepositMaster', 'ViewBankDepositMaster');
+    });
+    $('#btnEdit').click(function (e) {
+        debugger;
+        MEdit('tblBankDepositMasters', 'BankDepositMaster', 'ViewBankDepositMaster');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblBankDepositMasters', 'BankDepositMaster', 'Delete');
+    });
+    $("#btnApprove").click(function () {
+        MUpdate('tblBankDepositMasters', 'BankDepositMaster', 'Approve');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblBankDepositMasters', 'txtSearch', 'BankDepositMaster', 'Search');     // only for Enter Press
+        }
+    });
+    function OnClickRow(index, row) {
+        $("#btnEdit").hide();
+        $("#btnDelete").hide();
+        $("#btnApprove").hide();
+        if (row.Status != 1) {
+            $("#btnEdit").show();
+            $("#btnDelete").show();
+            $("#btnApprove").show();
+        }
+    }
+    function ViewChild() {
+        debugger;
+
+        var obj = $('#tblBankDepositMasters').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('error', 'Please select an item from list!', 'info');
+            return false;
+        }
+        $('#winViewChild').window('open');
+        MLoadDataGridByParentID('tblBankDepositDetails', obj.BankDepositMasterID, 'BankDepositMaster', 'GetChildListByID');
+    }
+</script>
+
+
+
+
+
+
+

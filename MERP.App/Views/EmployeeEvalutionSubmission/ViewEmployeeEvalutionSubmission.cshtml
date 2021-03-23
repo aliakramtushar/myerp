@@ -1,0 +1,238 @@
+﻿
+@{
+    ViewBag.Title = "ViewEmployeeEvalutionSubmission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody">
+    <div class="form-row">
+        <div class="form-EmployeeEvalutionSubmission col-md-4">
+            <label for="txtEmployeeEvalutionSubmissionName">Employee Code:</label>
+            <input type="text" class="form-control col-md-12" id="txtEmployeeCode" readonly>
+        </div>
+        <div class="form-EmployeeEvalutionSubmission col-md-4">
+            <label for="txtEmployeeEvalutionSubmissionName">Employee Name:</label>
+            <input type="text" class="form-control col-md-12" id="txtEmployeeName" readonly>
+        </div>
+        <div class="form-EmployeeEvalutionSubmission col-md-4">
+            <label for="txtEmployeeEvalutionSubmissionName">Grade:</label>
+            <input type="text" class="form-control col-md-12" id="txtGradeID" readonly>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-EmployeeEvalutionSubmission col-md-4">
+            <label>Appraisal For:</label>
+            <select id="cboRole" class="form-control col-md-12">
+                <option value="0"> -select one-</option>
+                <option value="1"> Self</option>
+                <option value="2"> Supervisor</option>
+                <option value="3"> Peer</option>
+                <option value="4"> Deputy</option>
+            </select>
+        </div>
+        <div class="form-EmployeeEvalutionSubmission col-md-4">
+            <label id="lblEmployeeName"></label>
+            <select id="cboEmployeeName" class="form-control col-md-12"></select>
+        </div>
+    </div>
+</div>
+<table id="tblQuestions" class="easyui-datagrid" style="width:100%"
+       data-options="
+        rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    rowStyler:function(index,row){
+    if(row.QuestionMark != ''){return 'background-color:lightgray;color:black;font-weight:bold;';}
+    },
+    onDblClickRow:function(){ChildEdit()}">
+    <thead>
+        <tr>
+            @*<th data-options="field:'QuestionID', width:60, align:'center',">SL</th>*@
+            <th data-options="field:'QuestionType', width:120, align:'left',">Type</th>
+            <th data-options="field:'QuestionName', width:760, align:'left',">Question Name</th>
+            <th data-options="field:'QuestionMark', width:80, align:'center',">Marks</th>
+        </tr>
+    </thead>
+</table>
+
+<div class="form-row PageActionButton">
+    <button id="btnSubmit" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Submit</button>
+    @*<button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>*@
+</div>
+<div id="winEdit" class="easyui-window" title="Marks Entry" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:700px; height:440px; padding:20px">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label style="font-weight:bold">Serial No</label>
+            <input type="text" class="form-control col-md-12" id="QuestionID" readonly>
+        </div>
+        <div class="form-group col-md-6">
+            <label style="font-weight:bold">Type</label>
+            <input type="text" class="form-control col-md-12" id="QuestionType" readonly>
+        </div>
+        <div class="form-group col-md-12">
+            <label style="font-weight:bold">Question Name</label>
+            <textarea type="text" class="form-control col-md-12" id="QuestionName" readonly></textarea>
+        </div>
+        <div class="form-group col-md-12">
+            <label style="font-weight:bold">Mark</label>
+            <select class="form-control col-md-5" id="cboQuestionMark">
+                <option value="1">1  (Unsatisfactory)</option>
+                <option value="2">2  (Unsatisfactory)</option>
+                <option value="3">3  (Needs Improvement)</option>
+                <option value="4">4  (Needs Improvement)</option>
+                <option value="5">5  (Meet Expectations)</option>
+                <option value="6">6  (Meet Expectations)</option>
+                <option value="7">7  (Exceeds Expectation)</option>
+                <option value="8">8  (Exceeds Expectation)</option>
+                <option value="9">9  (Exceptional)</option>
+                <option value="10">10  (Exceptional)</option>
+            </select>
+        </div>
+
+
+        <div class="form-group col-md-12 ActionButton">
+            <button id="btnWinUpdate" type="button" class="btn btn-success ActionButton" style="float:right" aria-label="Left Align">Submit</button>
+            <button id="btnWinClose" type="button" class="btn btn-danger ActionButton" style="float:right" aria-label="Left Align">Close</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+        var _oEmployeeEvalutionSubmission = [];
+    var _oUser = [];
+    var IsSubmitted = 0;
+
+        $(document).ready(function () {
+            _oEmployeeEvalutionSubmission = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.EmployeeEvalutionSubmission));
+            _oUser = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.User));
+            IsSubmitted = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.IsSubmitted));
+            if (IsSubmitted == 1) { $('#btnSubmit').hide();}
+            SetPageHeader('Employee Evalution Submission Information');
+            RefreshComponents(_oEmployeeEvalutionSubmission);
+            $('#lblEmployeeName').hide();
+            $('#cboEmployeeName').hide();
+            MSWAL('Warning !!', 'Please carefully fill-up all Answers, Once you submit your scores, forbidden for any changes !', 'warning');
+        });
+    function RefreshComponents(obj) {
+        $('#txtEmployeeCode').val(_oUser.EmployeeCode);
+        $('#txtEmployeeName').val(_oUser.FullName);
+        $('#txtGradeID').val(_oUser.GradeID);
+    }
+        function RefreshObject() {
+            var oDataObject = {
+                EmployeeEvalutionSubmissionID : _oEmployeeEvalutionSubmission.EmployeeEvalutionSubmissionID,
+                EmployeeEvalutionSubmissionName: $('#txtEmployeeEvalutionSubmissionName').val(),
+                Address: $('#txtAddress').val(),
+                Remarks: $('#txtRemarks').val(),
+                ActivityStatus: $('#cboActivityStatus').val()
+            };
+        return oDataObject;
+    }
+    $("#cboEmployeeName").change(function () {
+        MLoadDataGrid('tblQuestions', [], 'Quesition List');
+        if ($('#cboEmployeeName').val() == 0) return;
+        if ($('#cboRole').val() == 0) return;
+        MGeneralAjaxWithReturnFn({ ErrorMessage: $('#cboRole').val() + '~' + $('#cboEmployeeName').val() }, 'EmployeeEvalutionSubmission', 'GetQuesitions', 'LoadQuesitions');
+    });
+    $("#cboRole").change(function () {
+        $('#lblEmployeeName').hide();
+        $('#cboEmployeeName').hide();
+        if ($('#cboRole').val() == 0) {
+            MLoadDataGrid('tblQuestions', [], 'Quesition List');
+            MSWAL_WithFocus('Error', 'select any type', 'error', 'cboRole');
+            return;
+        }
+        if ($('#cboRole').val() > 1 && $('#cboRole').val() < 5) {
+            $('#lblEmployeeName').show();
+            $('#cboEmployeeName').show();
+            $('#lblEmployeeName').text('Select ' + $("#cboRole option:selected").text() + ':');
+            MGeneralAjaxWithReturnFn({ ErrorMessage: $('#cboRole').val() }, 'EmployeeEvalutionSubmission', 'GetUserList', 'LoadUserList');
+        }
+        if ($('#cboRole').val() == 1) {
+            MGeneralAjaxWithReturnFn({ ErrorMessage: $('#cboRole').val() + '~' + 'self'}, 'EmployeeEvalutionSubmission', 'GetQuesitions', 'LoadQuesitions');
+        }
+        else {
+            MLoadDataGrid('tblQuestions', [], 'Quesition List');
+        }
+    });
+    function LoadUserList(retObjList) {
+        MLoadComboBoxWithSelect('cboEmployeeName', retObjList);
+    }
+    function LoadQuesitions(retObjList) {
+        MLoadDataGrid('tblQuestions', [], 'Quesition List');
+        MLoadDataGrid('tblQuestions', retObjList, 'Quesition List');
+    }
+    $('#btnBack').click(function (e) {
+        window.location.href = '/EmployeeEvalutionSubmission/ViewEmployeeEvalutionSubmissions';
+    });
+    $('#btnSubmit').click(function (e) {
+        MGeneralAjaxWithReturnFn({ ErrorMessage: 'Submit' }, 'EmployeeEvalutionSubmission', 'SubmitChecker', 'returnFn');
+    });
+    function returnFn(retObj){
+        if (retObj.ErrorMessage == '') {
+            MSWAL_WithRedirect('Submitted Successfully', 'Thank you for your perticipation !!', 'success', '/EmployeeEvalutionSubmission/ViewEmployeeEvalutionSubmissions');
+        }
+        else {
+            MSWAL('Not Submitted !!' + retObj.ErrorMessage, '', 'error');
+        }
+    }
+    function ChildEdit() {
+        var obj = $('#tblQuestions').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('Warning!', 'Please select an item from list!', 'error');
+            return false;
+        }
+        if (IsSubmitted == 1) {
+            MSWAL('Warning!', 'You have already submitted!', 'error');
+            return false;
+        }
+        if ($('#cboRole').val() > 1 && $('#cboRole').val() < 5) {
+            if ($('#cboEmployeeName').val() == 0) {
+                MSWAL_WithFocus('Warning', 'Please Select Name !!', 'error', 'cboEmployeeName');
+                return;
+            }
+            $('#winEdit').window('open', 'Marks Entry For :' + $("#cboEmployeeName option:selected").text() + ':');
+        }
+        else {
+            $('#winEdit').window('open','Marks Entry For :');
+        }
+        $('#QuestionID').val(obj.QuestionID);
+        $('#QuestionType').val(obj.QuestionType);
+        $('#QuestionName').val(obj.QuestionName);
+        $('#cboQuestionMark').val(obj.QuestionMark);
+    }
+    $('#btnWinUpdate').click(function (e) {
+        if ($('#cboQuestionMark').val() == '' || $('#cboQuestionMark').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please Enter The Marks!!', 'error', 'cboQuestionMark');
+            return;
+        }
+        var obj = $('#tblQuestions').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('Warning!', 'Please select an item from list!', 'error');
+            return false;
+        }
+        obj.QuestionMark = $('#cboQuestionMark').val();
+        if ($('#cboRole').val() == 1) {
+            obj.EvaluateFor = 'self';
+        }
+        if ($('#cboRole').val() > 1 && $('#cboRole').val() < 5) {
+            //obj.EvaluateFor = $("#cboEmployeeName option:selected").text();
+            obj.EvaluateFor = $("#cboEmployeeName").val();
+
+        }
+        MObjList = null;
+        MObjList = obj;
+        obj.RelationType = $('#cboRole').val();
+        MGeneralAjaxWithReturnFn(obj, 'EmployeeEvalutionSubmission', 'Save', 'retErrorMsg');
+        $('#winEdit').window('close');
+    });
+    function retErrorMsg(retObj) {
+        MUpdateDataGrid('tblQuestions', MObjList, -1);
+        MEUAL('Updated', 'Your Given Mark Already Updated', 2, 'slide', 'c1');
+    }
+    $('#btnWinClose').click(function (e) {
+        $('#winEdit').window('close');
+    });
+
+
+
+
+</script>

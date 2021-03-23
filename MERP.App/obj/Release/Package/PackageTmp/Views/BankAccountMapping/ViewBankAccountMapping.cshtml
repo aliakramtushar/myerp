@@ -1,0 +1,103 @@
+﻿
+@{
+    ViewBag.Title = "ViewBankAccountMapping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="cboBanks">Bank Name</label>
+            <select id="cboBanks" class="form-control col-md-12"></select>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="txtBankBranchName">Bank Branch Name</label>
+            <input type="text" class="form-control col-md-12" id="txtBankBranchName">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="txtBankAccountName">Account Name</label>
+            <input type="text" class="form-control col-md-12" id="txtBankAccountName">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="txtBankAccountNo">Account No</label>
+            <input type="text" class="form-control col-md-12" id="txtBankAccountNo">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="cboStatus">Status</label>
+            <select id="cboStatus" class="form-control col-md-12">
+                <option value="0">In Active</option>
+                <option value="1">Active</option>
+            </select>
+        </div>
+        <div class="form-group col-md-9">
+            <label for="txt">Remarks</label>
+            <input type="text" class="form-control col-md-12" id="txtRemarks" placeholder="Optional">
+        </div>
+    </div>
+    <div class="form-row PageActionButton">
+        <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+        <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oBankAccountMapping = [];
+    var _oBanks = [];
+
+        $(document).ready(function () {
+            debugger;
+            SetPageHeader('Bank Account Mapping');
+            _oBankAccountMapping = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankAccountMapping));
+            _oBanks = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Banks));
+
+            MLoadComboBox('cboBanks', _oBanks);
+            RefreshComponents(_oBankAccountMapping);
+        });
+        function RefreshComponents(obj) {
+            if (obj == null) {
+                $('#txtBankBranchName').val('');
+                $('#cboBanks').val(0);
+                $('#txtBankAccountName').val('');
+                $('#txtBankAccountNo').val('');
+                $('#cboStatus').val(0);
+                $('#txtRemarks').val('');
+            }
+            else {
+                $('#txtBankBranchName').val(obj.BankBranchName);
+                $('#cboBanks').val(obj.BankID);
+                $('#txtBankAccountName').val(obj.BankAccountName);
+                $('#txtBankAccountNo').val(obj.BankAccountNo);
+                $('#cboStatus').val(obj.IsActive);
+                $('#txtRemarks').val(obj.Remarks);
+            }
+        }
+        function RefreshObject() {
+            debugger;
+            var oDataObject = {
+                BankAccountMappingID: _oBankAccountMapping.BankAccountMappingID,
+                BankID : $('#cboBanks').val(),
+                BankAccountName: $('#txtBankAccountName').val(),
+                BankAccountNo: $('#txtBankAccountNo').val(),
+                Remarks : $('#txtRemarks').val(),
+                BankBranchName: $('#txtBankBranchName').val(),
+                IsActive: parseInt($('#cboStatus').val())
+            };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'BankAccountMapping', 'Save');
+    });
+</script>
+
+
+
+
+
+
+

@@ -1,0 +1,125 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblProductSubCategorys" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'ProductSubCategoryName', width:250, align:'left'">Product Sub Category</th>
+                <th data-options="field:'ProductSubCategoryCode', width:250, align:'left'">Code</th>
+                <th data-options="field:'ProductCategoryName', width:250, align:'left'">Product Category</th>
+                <th data-options="field:'IsInActiveSt', width:100, align:'center'">In Active</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<div id="winEdit" class="easyui-window" title="Product Category Information" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:400px; height:480px; padding:20px">
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <input type="hidden" id="txtProductSubCategoryID">
+            <label for="txtProductSubCategoryName">Product Sub Category Name</label>
+            <input type="text" class="form-control col-md-12" id="txtProductSubCategoryName">
+        </div>
+        <div class="form-group col-md-12">
+            <label for="txtProductSubCategoryCode">Sub Category Code</label>
+            <input type="text" class="form-control col-md-12" id="txtProductSubCategoryCode" disabled>
+        </div>
+        <div class="form-group col-md-12">
+            <label for="cboProductCategorys">Product Category</label>
+            <select class="form-control col-md-12" id="cboProductCategorys"></select>
+        </div>
+        <div class="form-group col-md-12">
+            <label for="cboIsInActive">Is InActive</label>
+            <select class="form-control col-md-12" id="cboIsInActive">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group col-md-12 ActionButton">
+        <button id="btnWinSave" type="button" class="btn btn-success ActionButton" style="float:right" aria-label="Left Align">Save</button>
+        <button id="btnWinClose" type="button" class="btn btn-danger ActionButton" style="float:right" aria-label="Left Align">Close</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oProductSubCategorys = [];
+    var _oProductCategorys = [];
+    $(document).ready(function () {
+        SetPageHeader('Product Sub-Category Setup');
+        _oProductSubCategorys = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ProductSubCategorys));
+        _oProductCategorys =  @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ProductCategorys));
+        MLoadDataGrid('tblProductSubCategorys', _oProductSubCategorys, 'Product Category List', 100, 'cboPagination');
+        MLoadComboBoxWithSelect('cboProductCategorys', _oProductCategorys);
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblProductSubCategorys', _oProductSubCategorys, 100, 'cboPagination');
+    });
+    $('#btnAdd').click(function (e) {
+        MWinPickerOpen(1, 'tblProductSubCategorys', 'winEdit', 'RefreshWinObject');
+    });
+    $('#btnEdit').click(function (e) {
+        MWinPickerOpen(2, 'tblProductSubCategorys', 'winEdit', 'RefreshWinObject');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblProductSubCategorys', 'ProductSubCategory', 'Delete');
+    });
+    $('#btnWinClose').click(function (e) {
+        $('#winEdit').window('close');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            MSearch('tblProductSubCategorys', 'txtSearch', 'ProductSubCategory', 'Search');     // only for Enter Press
+        }
+    });
+    $("#btnWinSave").click(function () {
+        MWinPickerSave(MakeObject().ProductSubCategoryID, MakeObject(), 'ProductSubCategory', 'Save', 'tblProductSubCategorys','winEdit','')
+    });
+    function RefreshWinObject(obj) {
+        $('#winEdit').window('open');
+        if (obj == null) {
+            $('#txtProductSubCategoryID').val(0);
+            $('#txtProductSubCategoryName').val("");
+            $('#txtProductSubCategoryCode').val("");
+            $('#cboIsInActive').val(0);
+            $('#cboProductCategorys').val(0);
+        }
+        else {
+            $('#txtProductSubCategoryID').val(obj.ProductSubCategoryID);
+            $('#txtProductSubCategoryName').val(obj.ProductSubCategoryName);
+            $('#txtProductSubCategoryCode').val(obj.ProductSubCategoryCode);
+            $('#cboIsInActive').val(obj.IsInActiveInt);
+            $('#cboProductCategorys').val(obj.ProductCategoryID);
+        }
+    }
+    function MakeObject() {
+        var obj = {
+            ProductSubCategoryID: $('#txtProductSubCategoryID').val(),
+            ProductCategoryID: parseInt($('#cboProductCategorys').val()),
+            ProductSubCategoryName:$('#txtProductSubCategoryName').val(),
+            ProductSubCategoryCode: $('#txtProductSubCategoryCode').val(),
+            IsInActive: parseInt($('#cboIsInActive').val()),
+        }
+        return obj;
+    }
+</script>
+
+
+
+
+
+

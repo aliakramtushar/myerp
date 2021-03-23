@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div style="background-position: center; background-repeat: no-repeat; background-size: cover;">
+
+
+
+    @*<div class="col-md-8" style="margin:0 auto">*@
+
+    @*<img src="~/Content/img/HNYas.gif" style="width:600px" />*@
+    <img src="~/Content/img/360feedback.jpg" style="height:350px; margin: 0 auto" />
+    <button id="btnAdd" type="button" class="btn btn-success">360 Degree Evaluation</button>
+    @*</div>*@
+
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        SetPageHeader('360 Degree Employee Evaluation Submission');
+    });
+    $('#btnAdd').click(function (e) {
+        window.location.href = '/EmployeeEvalutionSubmission/ViewEmployeeEvalutionSubmission?nID=0';
+    });
+</script>
+
+
+
+
+
+

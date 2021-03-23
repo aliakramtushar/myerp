@@ -1,0 +1,141 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody row col-md-12" style="margin-bottom:20px; background: #abbaab; background: -webkit-linear-gradient(to right, #ffffff, #abbaab); background: linear-gradient(to right, #ffffff, #abbaab);">
+    <div class="col-md-12 row">
+        <label class="form-control-sm col-md-3" style="font-weight: bold; font-size:20px; text-align:right">Report Name : </label>
+        <select id="cboReportMasters" class="form-control-sm col-md-8" style="font-size:20px"></select>
+
+
+    </div>
+</div>
+<div id="divRptParameter" class="row col-md-12" style="background: #A1FFCE; /* fallback for old browsers */ background: -webkit-linear-gradient(to right, #FAFFD1, #A1FFCE); /* Chrome 10-25, Safari 5.1-6 */ background: linear-gradient(to right, #FAFFD1, #A1FFCE); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */ ">
+</div>
+<div class="form-group col-md-12 PageActionButton">
+    <button id="btnExcel" type="button" class="btn btn-info ActionButton" aria-label="Left Align" style="float:right">Excel</button>
+    <button id="btnPDF" type="button" class="btn btn-success ActionButton" aria-label="Left Align" style="float:right">PDF</button>
+</div>
+<script type="text/javascript">
+    var _oReportMasters = [];
+    var divRptParameter;
+    $(document).ready(function () {
+        SetPageHeader('Report Generator Panel');
+        _oReportMasters = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ReportMasters));
+        MLoadComboBoxWithSelect('cboReportMasters', _oReportMasters);
+
+        divRptParameter = document.getElementById('divRptParameter');
+        $('#btnExcel').hide();
+        $('#btnPDF').hide();
+    });
+    $("#cboReportMasters").change(function () {
+        RefreshReportUIParemeter();
+        if ($('#cboReportMasters').val() != 0) {
+            MGeneralAjaxWithReturnFn({ ReportMasterID: $('#cboReportMasters').val() }, 'ReportMaster', 'GetReportMaster', 'SetReportParameter');
+        }
+    });
+    function fn_TextBox(obj) {
+        var div = document.createElement('div');
+        div.setAttribute('class', 'form-control-sm');
+        div.setAttribute('class', 'col-sm-4');
+        div.innerHTML =
+        "<label class='form-control-sm col-sm-6' style='font-weight:bold;text-align: right' for='" + obj.ControlID + "'>" + obj.LabelName + " : </label>" +
+        "<input type='text' id= '" + obj.ControlID + "' class='form-control-sm col-sm-6'/>";
+        divRptParameter.appendChild(div);
+    }
+    function fn_DropDown(obj) {
+        var div = document.createElement('div');
+        div.setAttribute('class', 'form-control-sm');
+        div.setAttribute('class', 'col-sm-4');
+        div.innerHTML =
+        "<label class='form-control-sm col-sm-6' style='font-weight:bold;text-align: right' for='" + obj.ControlID + "'>" + obj.LabelName + " : </label>" +
+        "<select id='" + obj.ControlID + "' class='form-control-sm col-sm-6'></select>"
+        divRptParameter.appendChild(div);
+        MLoadComboByParentID(obj.ControlID, obj.FieldName, 'ReportComponent', 'GetsReportComponent');
+    }
+    function fn_Date(obj) {
+        var div = document.createElement('div');
+        div.setAttribute('class', 'form-control-sm');
+        div.setAttribute('class', 'col-sm-4');
+        div.innerHTML =
+        "<label class='form-control-sm col-sm-6' style='font-weight:bold;text-align: right' for='" + obj.ControlID + "'>" + obj.LabelName + " : </label>" +
+        "<input type='date' id= '" + obj.ControlID + "' class='form-control-sm col-sm-6'/>";
+        divRptParameter.appendChild(div);
+    }
+    function fn_Database_Table(obj) {
+        //var div = document.createElement('div');
+        //div.setAttribute('class', 'form-control-sm');
+        //div.setAttribute('class', 'col-sm-4');
+        //div.innerHTML =
+        //"<label class='form-control-sm col-sm-6' style='font-weight:bold;text-align: right' for='" + obj.ControlID + "'>" + obj.LabelName + " : </label>" +
+        //"<input type='text' id= '" + obj.ControlID + "' class='form-control-sm col-sm-6'/>";
+        //divRptParameter.appendChild(div);
+    }
+    function SetReportParameter(obj) {
+        debugger;
+        if (obj.IsExcel == true) $('#btnExcel').show();
+        if (obj.IsPDF == true) $('#btnPDF').show();
+        MObjList = obj;
+        for (var i = 0; i < obj.ReportDetails.length; i++) {
+            window['fn_' + obj.ReportDetails[i].ControlTypeSt](obj.ReportDetails[i]);
+        }
+    }
+    function RefreshReportUIParemeter() {
+        divRptParameter.innerHTML = "";
+        $('#btnExcel').hide();
+        $('#btnPDF').hide();
+    }
+    function MakeObjectForWithParameterValue() {
+        debugger;
+        var sSQLStr = '';
+        if (MObjList.IsSP == true) {
+            sSQLStr = "EXEC " + MObjList.Query;
+        }
+        MObjList.ReportDetails.sort(function (a, b) { return (a.Sequence - b.Sequence); });
+        for (var i = 0; i < MObjList.ReportDetails.length; i++) {
+            var tempStr = window['fn_GET_' + MObjList.ReportDetails[i].ControlTypeSt](MObjList.ReportDetails[i]);
+            if (tempStr == '') return;
+            sSQLStr = sSQLStr + " '" + window['fn_GET_' + MObjList.ReportDetails[i].ControlTypeSt](MObjList.ReportDetails[i]) + "',";
+        }
+        MObjList.ErrorMessage = sSQLStr.slice(0, -1);
+    }
+    $("#btnExcel").click(function () {
+        MakeObjectForWithParameterValue();
+        MGeneralAjaxWithReturnFn_MaxJson(MObjList, 'ReportComponent', 'GetDataForExcelReport', 'fnRetObjData');
+    });
+    function fnRetObjData(objList) {
+        debugger;
+        MExcel(JSON.parse(JSON.parse(objList)), MObjList.MModelString + '.xls');
+    }
+    $("#btnPDF").click(function () {
+        MakeObjectForWithParameterValue();
+        window.open("/ReportComponent/GetDataForCrystalReport?str=" + MObjList.ErrorMessage + "&rpt=" + MObjList.RptFileName);
+    });
+    function fn_GET_TextBox(obj) {
+        if ($('#' + obj.ControlID).val() == '') {
+            MSWAL_WithFocus('No Entry', 'Please Select ' + obj.LabelName, 'error', obj.ControlID);
+            return false;
+        }
+        return  $('#' + obj.ControlID).val();
+    }
+    function fn_GET_DropDown(obj) {
+        if ($("#" + obj.ControlID + " option:selected").text() == '--select one--') {
+            MSWAL_WithFocus('No Entry', 'Please Select ' + obj.LabelName, 'error', obj.ControlID);
+            return false;
+        }
+        return $('#' + obj.ControlID).val();
+    }
+    function fn_GET_Date(obj) {
+        if ($('#' + obj.ControlID).val() == '') {
+            MSWAL_WithFocus('No Entry', 'Please Select ' + obj.LabelName, 'error', obj.ControlID);
+            return false;
+        }
+        return $('#' + obj.ControlID).val();
+    }
+</script>
+
+
+
+
+
+
+

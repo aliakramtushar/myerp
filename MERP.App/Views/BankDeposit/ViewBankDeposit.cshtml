@@ -1,0 +1,339 @@
+﻿
+@{
+    ViewBag.Title = "ViewBankDeposit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody" style="padding:10px">
+    <div class="form-row ">
+        <div class="form-group col-md-9 ">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="cboBranchs">Branch Name</label>
+                    <select id="cboBranchs" class="form-control col-md-12" disabled></select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="dtDepositDate">Deposit Date</label>
+                    <input class="easyui-datebox col-md-11" id="dtDepositDate" data-options="formatter:MDateFormatter,parser:MParser" style="height:38px">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="cboPaymentMedias">Payment Media</label>
+                    <select id="cboPaymentMedias" class="form-control col-md-12"></select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="txtRemarks">Remarks</label>
+                    <input type="text" class="form-control col-md-12" id="txtRemarks">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label for="cboBankAccountMappings">Bank Account</label>
+                    <select id="cboBankAccountMappings" class="form-control col-md-12"></select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="txtRefNo">Ref No</label>
+                    <input type="text" class="form-control col-md-12" id="txtRefNo">
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-3 border border-secondary" style="background-color:gainsboro;position: sticky;top: 0;">
+            <div class="form-group col-md-12">
+                <label for="txtTotalDepositAmount" style="font-weight:bold; text-align:right">Total Deposit Amount</label>
+                <input type="text" id="txtTotalDepositAmount" class="form-control col-md-12" style="font-weight:bold;" placeholder="0.00" disabled>
+            </div>
+            <div class="form-group col-md-12 PageActionButton">
+                <button id="btnSave" type="button" class="btn btn-success ActionButton easyui-tooltip" title="Save Data" aria-label="Left Align">Save</button>
+                <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="form-row">
+    <div class="form-group col-md-9">
+        <table id="tblNWRDirectSalesDetails" class="easyui-datagrid" style="width:100%"
+               data-options="
+    rownumbers:true,
+    singleSelect:false,
+    collapsible:false,
+    toolbar:'#toolbar',
+    onCheck: function(rowIndex, rowData){UpdateAmount('getChecked')},
+    onUncheck: function(rowIndex, rowData){UpdateAmount('getChecked')},
+    onCheckAll: function(rowIndex, rowData){UpdateAmount('getSelections')},
+    onUncheckAll: function(rowIndex, rowData){UpdateAmount('getSelections')}
+    ">
+            <thead>
+                <tr>
+                    <th data-options="field:'ck',checkbox:true"></th>
+                    <th data-options="field:'BusinessUnitName', width:150, align:'left'">Project Name</th>
+                    <th data-options="field:'LSOCode', width:150, align:'left'">LSO / DS Code</th>
+                    <th data-options="field:'SKUID', width:70, align:'center'">SKUID</th>
+                    <th data-options="field:'SKUName', width:130, align:'left'">SKU Name</th>
+                    <th data-options="field:'InvoiceDateSt', width:100, align:'center'">Invoice Date</th>
+                    <th data-options="field:'CollectedAmount', width:140, align:'right'">Collected Amount</th>
+                </tr>
+            </thead>
+        </table>
+        <div id="toolbar">
+            <div class="form-row" style="font-weight:bold">
+                <div class="form-group-sm col-md-3" hidden>
+                    <label for="cboBusinessUnits">Project Name</label>
+                    <select id="cboBusinessUnits" class="form-control-sm col-md-12"></select>
+                </div>
+                <div class="form-group-sm col-md-11">
+                    <label for="dtDepositStartDate">Sale Date:</label>
+                    <input class="easyui-datebox col-md-2" id="dtDepositStartDate" data-options="formatter:MDateFormatter,parser:MParser" style="height:38px">
+                    <label for="dtDepositEndDate">To</label>
+                    <input class="easyui-datebox col-md-2" id="dtDepositEndDate" data-options="formatter:MDateFormatter,parser:MParser" style="height:38px">
+                    <button id="btnLoad" type="button" class="btn btn-success easyui-tooltip" title="Search data & load grid"><i class="fas fa-search"></i></button>
+                </div>
+                @*<div class="form-group-sm col-md-3">
+                        <label for="dtDepositEndDate">Sale to Date</label>
+                        <input class="easyui-datebox col-md-12" id="dtDepositEndDate" data-options="formatter:MDateFormatter,parser:MParser" style="height:38px">
+
+                    </div>*@
+                @*<div class="form-group-sm col-md-2">
+                        <button id="btnLoad" type="button" class="btn btn-success" ><i style="font-size:25px" class="fas fa-search"></i></button>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <table id="tblBusinessUnits" class="easyui-datagrid" style="width:100%;" title="Projects"
+               data-options="
+               singleSelect:false,
+               collapsible:true,
+               onCheck: function(rowIndex, rowData){OnCheckProjectName(rowIndex, rowData)},
+               onUncheck: function(rowIndex, rowData){OnUnCheckProjectName(rowIndex, rowData)},
+               ">
+            <thead>
+                <tr>
+                    <th data-options="field:'BusinessUnitName',width:190">Project Name</th>
+                    <th data-options="field:'Remarks',width:70,align:'right'">Amount</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oBranchs = [];
+    var _oPaymentMedias = [];
+    var _oBankAccountMappings = [];
+    var _oBusinessUnits = [];
+    var _oBankDeposit = [];
+    var _bTable = false;
+    $(document).ready(function () {
+        debugger;
+
+            _oBranchs = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Branchs));
+            _oPaymentMedias = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.PaymentMedias));
+            _oBankAccountMappings = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankAccountMappings));
+            _oBankDeposit = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankDeposit));
+            MLoadComboBox('cboBranchs', _oBranchs);
+            MLoadComboBox('cboPaymentMedias', _oPaymentMedias);
+            MLoadComboBoxWithSelect('cboBankAccountMappings', _oBankAccountMappings);
+        RefreshComponents(_oBankDeposit);
+        SetPageHeader('Deposit Code : ' + _oBankDeposit.DepositCode);
+        });
+
+    function RefreshComponents(obj) {
+        $('#dtDepositStartDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+        $('#dtDepositEndDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+        //var asd = localStorage.getItem('MUserBranchID');
+        $('#cboBranchs').val(parseInt(localStorage.getItem('MUserBranchID')));
+        if (obj.BankDepositID == 0) {
+            $('#cboPaymentMedias').val(0);
+            $('#txtRefNo').val("");
+            $('#cboBankAccountMappings').val(0);
+            $('#txtRemarks').val("");
+            $('#txtTotalDepositAmount').val(0);
+            //$('#dtDepositDate').datebox({ value: obj.DepositDateSt, required: false, showSeconds: false });
+        }
+        else {
+            MBackLink();
+        }
+     }
+    function RefreshObject() {
+            var oDataObject = {
+                BankDepositID: _oBankDeposit.BankDepositID,
+                BranchID: $('#cboBranchs').val(),
+                DepositDate: MGetDateSt($('#dtDepositDate').val()),
+                PaymentMedia: $('#cboPaymentMedias').val(),
+                RefNo: $('#txtRefNo').val(),
+                BankAccountMappingID: $('#cboBankAccountMappings').val(),
+                Remarks: $('#txtRemarks').val(),
+                //NWRDirectSalesDetails: $('#tblNWRDirectSalesDetails').datagrid('getSelections')
+                ErrorMessage: $('#tblNWRDirectSalesDetails').datagrid('getSelections').map(function (a) { return a.RID; }).join()
+        };
+        return oDataObject;
+    }
+    $("#cboBankAccountMappings").change(function () {
+        if ($('#cboBankAccountMappings').val() == 0) { MLoadComboBox('cboBusinessUnits', []); }
+        else {
+            MLoadDataGrid('tblNWRDirectSalesDetails', [], '');
+            $('#txtTotalDepositAmount').val(0);
+            MLoadComboByParentID('cboBusinessUnits', $('#cboBankAccountMappings').val(), 'BUBankAccountMapping', 'GetsByBankAccountMappingID');
+            MLoadDataGridByParentID('tblBusinessUnits', $('#cboBankAccountMappings').val(), 'BUBankAccountMapping', 'GetsByBankAccountMappingID');
+        }
+    });
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnLoad').click(function (e) {
+        if ($('#cboBankAccountMappings').val() == 0) {
+            MSWAL_WithFocus('Warning', 'Please Select Any Bank Account !!', 'error', 'cboBankAccountMappings');
+            return;
+        }
+        var sString = $('#cboBankAccountMappings').val() + '~' + $('#dtDepositStartDate').datebox('getValue') + '~' + $('#dtDepositEndDate').datebox('getValue') + '~';
+        debugger;
+        MLoadDataGridByParentID('tblNWRDirectSalesDetails', sString, 'BankDeposit', 'GetsNonDepositedSales');
+
+    });
+    //function OnCheckSalesDetail(rowIndex, rowData) {
+    //    UpdateAmount('getChecked');
+    //}
+    //function OnUnCheckSalesDetail(rowIndex, rowData) {
+    //    UpdateAmount('getChecked');
+    //}
+    //function OnCheckAllSalesDetail(rowIndex, rowData) {
+    //    UpdateAmount('getSelections');
+    //}
+    //function OnUnCheckAllSalesDetail(rowIndex, rowData) {
+    //    UpdateAmount('getSelections');
+    //}
+    function OnCheckProjectName(rowIndex, rowData) {
+        var rows = $('#tblNWRDirectSalesDetails').datagrid('getRows');
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i].BusinessUnitID == rowData.BusinessUnitID) {
+                $('#tblNWRDirectSalesDetails').datagrid('checkRow',i);
+            }
+        }
+    }
+    function OnUnCheckProjectName(rowIndex, rowData) {
+        var rows = $('#tblNWRDirectSalesDetails').datagrid('getRows');
+        for (var i = 0; i < rows.length; i++) {
+            if (rows[i].BusinessUnitID == rowData.BusinessUnitID) {
+                $('#tblNWRDirectSalesDetails').datagrid('uncheckRow', i);
+            }
+        }
+    }
+    function UpdateAmount(easyui_method) {
+        var rows_BusinessUnits = $('#tblBusinessUnits').datagrid('getRows');
+        var rows_SalesDetails = $('#tblNWRDirectSalesDetails').datagrid(easyui_method);
+        var nTotalAmount = 0;
+        for (var i = 0; i < rows_BusinessUnits.length; i++) {
+            var nBusinessUnitAmount = 0;
+            for (var j = 0; j < rows_SalesDetails.length; j++) {
+                if (rows_BusinessUnits[i].BusinessUnitID == rows_SalesDetails[j].BusinessUnitID) {
+                    nBusinessUnitAmount = nBusinessUnitAmount + rows_SalesDetails[j].CollectedAmount;
+                }
+            }
+            var obj = { BusinessUnitName: rows_BusinessUnits[i].BusinessUnitName, Remarks: nBusinessUnitAmount}
+            $('#tblBusinessUnits').datagrid('updateRow', { index: i, row: obj });
+            nTotalAmount = nTotalAmount + nBusinessUnitAmount;
+        }
+        $('#txtTotalDepositAmount').val(nTotalAmount);
+    }
+    $('#btnSave').click(function (e) {
+        if ($('#cboBranchs').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Please Select Any Branch!!', 'error','cboBranchs');
+            $('#cboBranchs').focus();
+            return;
+        }
+        if ($('#dtDepositDate').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Deposit Date!!', 'error','dtDepositDate');
+            $('#dtDepositDate').focus();
+            return;
+        }
+        if ($('#cboPaymentMedias').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Payment Media!!', 'error','cboPaymentMedias');
+            $('#cboPaymentMedias').focus();
+            return;
+        }
+        if ($('#cboBankAccountMappings').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Bank Account!!', 'error','cboBankAccountMappings');
+            $('#cboBankAccountMappings').focus();
+            return;
+        }
+        if ($('#txtTotalDepositAmount').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Zero Amount Cant Be Deposited!!', 'error','txtTotalDepositAmount');
+            $('#txtTotalDepositAmount').focus();
+            return;
+        }
+        if ($('#tblNWRDirectSalesDetails').datagrid('getRows').length == 0) {
+            MSWAL('Warning!', 'There is no data in details!!', 'error');
+            return;
+        }
+        var objList = $('#tblNWRDirectSalesDetails').datagrid('getRows');
+        for (var i = 0; i < objList.length; i++) {
+            if (objList[i].BusinessUnitID == $('#cboBusinessUnits').val()) {
+                MSWAL('Warning!', 'Duplicate Project Name', 'error');
+                return;
+            }
+        } 
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'BankDeposit', 'Save');
+    });
+
+    //function UpdateChildGrid() {
+    //    var objList = $('#tblNWRDirectSalesDetails').datagrid('getRows');
+    //    var nTotalAmount = 0.00;
+    //    for (var i = 0; i < objList.length; i++) {
+    //        nTotalAmount = Number(nTotalAmount) + Number(objList[i].DepositAmount);
+    //    }
+    //    $('#txtTotalDepositAmount').val(nTotalAmount);
+    //    $('#cboBusinessUnits').val(0);
+    //    $('#txtDepositAmount').val('');
+    //    $('#txtGridRemarks').val('');
+    //}
+    //function ChildEdit() {
+    //    var obj = $('#tblNWRDirectSalesDetails').datagrid("getSelected");
+    //    if (obj == null) {
+    //        MSWAL('Warning!', 'Please select an item from list!', 'error');
+    //        return false;
+    //    }
+    //    $('#winEdit').window('open');
+    //    MLoadComboBox('cboWinBusinessUnits', _oBusinessUnits);
+    //    MLoadComboBox('cboWinBusinessUnits', _oBusinessUnits);
+    //    $('#cboWinBusinessUnits').val(obj.BusinessUnitID);
+    //    $('#txtWinDepositAmount').val(obj.DepositAmount);
+    //    $('#txtWinGridRemarks').val(obj.Remarks);
+    //}
+    //$('#btnWinUpdate').click(function (e) {
+    //    if ($('#cboWinBusinessUnits').val() == 0 || $('#cboWinBusinessUnits').val() == undefined) {
+    //        MSWAL_WithFocus('Warning!', 'Please Select The Business Name!!', 'error','cboWinBusinessUnits');
+    //        return;
+    //    }
+    //    if ($('#txtWinDepositAmount').val() == "" || $('#txtWinDepositAmount').val() <= 0 || $('#txtWinDepositAmount').val() == null || $('#txtWinDepositAmount').val() == undefined) {
+    //        MSWAL_WithFocus('Warning!', 'Please Enter Deposit Amount !!', 'error','txtWinDepositAmount');
+    //        return;
+    //    }
+    //    var objList = $('#tblNWRDirectSalesDetails').datagrid('getRows');
+    //    for (var i = 0; i < objList.length; i++) {
+    //        if (objList[i].BusinessUnitID == $('#cboWinBusinessUnits').val() && $('#tblNWRDirectSalesDetails').datagrid("getSelected").BusinessUnitID != $('#cboWinBusinessUnits').val()) {
+    //            MSWAL('Warning!', 'Duplicate Project Name !!', 'error');
+    //            return;
+    //        }
+    //    }
+    //    MUpdateDataGrid('tblNWRDirectSalesDetails', MakeObjectChild(), -1);
+    //    UpdateChildGrid();
+    //    $('#winEdit').window('close');
+    //});
+    //$('#btnWinClose').click(function (e) {
+    //    $('#winEdit').window('close');
+    //});
+    //function MakeObjectChild() {
+    //    var obj = $('#tblNWRDirectSalesDetails').datagrid("getSelected");
+    //    obj.BusinessUnitID = $('#cboWinBusinessUnits').val();
+    //    obj.BusinessUnitName = $("#cboWinBusinessUnits option:selected").text();
+    //    obj.DepositAmount = $('#txtWinDepositAmount').val();
+    //    obj.Remarks = $('#txtWinGridRemarks').val();
+    //    return obj;
+    //}
+</script>
+
+
+
+
+
+
+

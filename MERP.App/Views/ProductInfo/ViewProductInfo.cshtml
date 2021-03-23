@@ -1,0 +1,242 @@
+﻿
+@{
+    ViewBag.Title = "ViewProductInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody" style="padding:10px">
+    <div id="pBasicInformation" class="easyui-panel" title="Basic Information" style="width:100%;padding:15px;margin-bottom:20px">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <input type="hidden" id="txtProductId">
+                <label for="txtProductCode">Product Code</label>
+                <input type="text" class="form-control col-md-12" id="txtProductCode" placeholder="(auto Increment)" disabled>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="txtProductName">Product Name</label>
+                <input type="text" class="form-control col-md-12" id="txtProductName">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtShortName">Short Name</label>
+                <input type="text" class="form-control col-md-12" id="txtShortName">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboBrandInfos">Brand</label>
+                <select id="cboBrandInfos" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtModelNo">Model No</label>
+                <input type="text" class="form-control col-md-12" id="txtModelNo">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboProductTypes">Product Type</label>
+                <select id="cboProductTypes" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboProductCategorys">Category</label>
+                <select id="cboProductCategorys" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboProductSubCategorys">Sub Category</label>
+                <select id="cboProductSubCategorys" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboSegments">Segment</label>
+                <select id="cboSegments" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboProductStatus">Status</label>
+                <select id="cboProductStatus" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtDescription">Description</label>
+                <input type="text" class="form-control col-md-12" id="txtDescription">
+            </div>
+        </div>
+    </div>
+    <div id="pAdvanceInformation" class="easyui-panel" title="Advance Information" style="width:100%;padding:15px;margin-bottom:20px">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="txtSerialNo">SL No</label>
+                <input type="text" class="form-control col-md-12" id="txtSerialNo">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtTagNo">Tag No</label>
+                <input type="text" class="form-control col-md-12" id="txtTagNo">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="dtPurchaseDate">Purchase Date</label>
+                <input class="easyui-datebox col-md-11" id="dtPurchaseDate" data-options="formatter:MDateFormatter,parser:MParser" style="height:38px">
+            </div>
+
+            <div class="form-group col-md-2">
+                <label for="dtLaunchingDate">Launching Date</label>
+                <input class="easyui-datebox col-md-11" id="dtLaunchingDate" data-options="formatter:MDateFormatter,parser:MParser" style="height:38px">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtRefCode">Ref Code</label>
+                <input type="text" class="form-control col-md-12" id="txtRefCode">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtRemarks">Remarks</label>
+                <input type="text" class="form-control col-md-12" id="txtRemarks">
+            </div>
+        </div>
+    </div>
+    <div id="pAssetManagementInformation" class="easyui-panel" title="Asset Management Information" style="width:100%;padding:15px;">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="cboLots">Lot ID</label>
+                <select id="cboLots" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboDepartment">Department</label>
+                <select id="cboDepartment" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboCostCenters">Cost Center</label>
+                <select id="cboCostCenters" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboPersons">Supplier Person</label>
+                <select id="cboPersons" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtWarrantyInMonth">Warranty (In Month)</label>
+                <input type="text" class="form-control col-md-12" id="txtWarrantyInMonth">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtServiceLifeInMonth">Service Life (In Month)</label>
+                <input type="text" class="form-control col-md-12" id="txtServiceLifeInMonth">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtDepreciationRate">Depreciation Rate</label>
+                <input type="text" class="form-control col-md-12" id="txtDepreciationRate">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group col-md-12 PageActionButton">
+    <button id="btnSave" type="button" class="btn btn-success ActionButton easyui-tooltip" title="Save Data" aria-label="Left Align">Save</button>
+    <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+</div>
+<script type="text/javascript">
+    var _oBrandInfos = [];
+    var _oProductTypes = [];
+    var _oProductCategorys = [];
+    var _oProductSubCategorys = [];
+    var _oSegmentInfos = [];
+    var _oCostCenters = [];
+    var _oPersonInfos = [];
+    var _oActivityStatus = [];
+        $(document).ready(function () {
+            debugger;
+            _oBrandInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BrandInfos));
+            _oProductTypes = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ProductTypes));
+            _oProductCategorys = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ProductCategorys));
+            _oProductSubCategorys = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ProductSubCategorys));
+            _oSegmentInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.SegmentInfos));
+            _oCostCenters = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.CostCenters));
+            _oPersonInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.PersonInfos));
+            _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+            _oProductInfo = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ProductInfo));
+
+            MLoadComboBoxWithSelect('cboBrandInfos', _oBrandInfos);
+            MLoadComboBoxWithSelect('cboProductTypes', _oProductTypes);
+            MLoadComboBoxWithSelect('cboProductCategorys', _oProductCategorys);
+            MLoadComboBoxWithSelect('cboProductSubCategorys', _oProductSubCategorys);
+            MLoadComboBoxWithSelect('cboSegments', _oSegmentInfos);
+            MLoadComboBoxWithSelect('cboCostCenters', _oCostCenters);
+            MLoadComboBoxWithSelect('cboPersons', _oPersonInfos);
+            MLoadComboBox('cboProductStatus', _oActivityStatus);
+            RefreshPageLayout();
+            RefreshComponents(_oProductInfo);
+        });
+    function RefreshPageLayout() {
+        SetPageHeader('Product Information');
+        SetPanelHeader('pBasicInformation', 'Basic Information', 'powderblue');
+        SetPanelHeader('pAdvanceInformation', 'Advance Information', 'powderblue');
+        SetPanelHeader('pAssetManagementInformation', 'Asset Management Information', 'powderblue');
+        $('#dtPurchaseDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+        $('#dtLaunchingDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+    }
+    function RefreshComponents(obj)
+    {
+        $('#txtProductId').val(obj.ProductID);
+        $('#txtProductCode').val(obj.ProductCode);
+        $('#txtProductName').val(obj.ProductName);
+        $('#txtShortName').val(obj.ShortName);
+        $('#cboBrandInfos').val(obj.BrandID);
+        $('#txtModelNo').val(obj.ModelNo);
+        $('#cboProductTypes').val(obj.ProductTypeID);
+        $('#cboProductCategorys').val(obj.ProductCategoryID);
+        $('#cboProductSubCategorys').val(obj.ProductSubCategoryID);
+        $('#cboSegments').val(obj.SegmentID);
+        $('#cboProductStatus').val(obj.ProductStatus);
+        $('#txtDescription').val(obj.Description);
+        $('#txtSerialNo').val(obj.SerialNo);
+        $('#txtTagNo').val(obj.TagNo);
+        $('#dtPurchaseDate').datebox('setValue', MSetDate(obj.PurchaseDateSt));
+        $('#dtLaunchingDate').datebox('setValue', MSetDate(obj.LaunchingDateSt));
+        //DepositDate: MGetDateSt($('#dtDepositDate').val()),
+        $('#txtRefCode').val(obj.RefCode);
+        $('#txtRemarks').val(obj.Remarks);
+        $('#cboLots').val(obj.LotID);
+        $('#cboDepartment').val(obj.DepartmentID);
+        $('#cboCostCenters').val(obj.CostCenterID);
+        $('#cboPersons').val(obj.SupplierPersonID);
+        $('#txtWarrantyInMonth').val(obj.WarrantyInMonth);
+        $('#txtServiceLifeInMonth').val(obj.ServiceLifeInMonth);
+        $('#txtDepreciationRate').val(obj.DepreciationRate);
+    }
+    function RefreshObject() {
+        var oDataObject = {
+            ProductID: _oProductInfo.ProductID,
+            //ProductCode: $('#txtProductCode').val(),
+            ProductName: $('#txtProductName').val(),
+            ShortName: $('#txtShortName').val(),
+            BrandID: $('#cboBrandInfos').val(),
+            ModelNo: $('#txtModelNo').val(),
+            ProductTypeID: $('#cboProductTypes').val(),
+            ProductCategoryID: $('#cboProductCategorys').val(),
+            ProductSubCategoryID: $('#cboProductSubCategorys').val(),
+            SegmentID: $('#cboSegments').val(),
+            ProductStatus: $('#cboProductStatus').val(),
+            Description: $('#txtDescription').val(),
+            SerialNo: $('#txtSerialNo').val(),
+            TagNo: $('#txtTagNo').val(),
+            PurchaseDate: MGetDateSt($('#dtPurchaseDate').val()),
+            LaunchingDate: MGetDateSt($('#dtLaunchingDate').val()),
+            RefCode: $('#txtRefCode').val(),
+            Remarks: $('#txtRemarks').val(),
+            LotID: $('#cboLots').val(),
+            DepartmentID: $('#cboDepartment').val(),
+            CostCenterID: $('#cboCostCenters').val(),
+            SupplierPersonID: $('#cboPersons').val(),
+            WarrantyInMonth: $('#txtWarrantyInMonth').val(),
+            ServiceLifeInMonth: $('#txtServiceLifeInMonth').val(),
+            DepreciationRate: $('#txtDepreciationRate').val()
+        };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        if ($('#txtProductName').val() == '') {
+            MSWAL_WithFocus('Warning!', 'Please Enter Product Name!!', 'error','txtProductName');
+            return;
+        }
+        if ($('#txtQuery').val() == '') {
+            MSWAL_WithFocus('Warning!', 'Please Enter the Query you Execute!!', 'error', 'txtQuery');
+            return;
+        }
+        MSave(RefreshObject(), 'ProductInfo', 'Save');
+    });
+</script>
+
+
+
+
+
+
+

@@ -1,0 +1,106 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblCostCenters" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'CostCenterName', width:250, align:'left'">Cost Center</th>
+                <th data-options="field:'ActivityStatusSt', width:100, align:'center'">Activity Status</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<div id="winEdit" class="easyui-window" title="Cost Center Information" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:400px; height:320px; padding:20px">
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <input type="hidden" id="txtCostCenterID">
+            <label for="txtCostCenterName">Cost Center Name</label>
+            <input type="text" class="form-control col-md-12" id="txtCostCenterName">
+        </div>
+        <div class="form-group col-md-12">
+            <label for="cboActivityStatus">Activity Status</label>
+            <select class="form-control col-md-12" id="cboActivityStatus"></select>
+        </div>
+    </div>
+    <div class="form-group col-md-12 ActionButton">
+        <button id="btnWinSave" type="button" class="btn btn-success ActionButton" style="float:right" aria-label="Left Align">Save</button>
+        <button id="btnWinClose" type="button" class="btn btn-danger ActionButton" style="float:right" aria-label="Left Align">Close</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oCostCenters = [];
+    var _oActivityStatus = [];
+    $(document).ready(function () {
+        SetPageHeader('Cost Center Setup');
+        _oCostCenters = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.CostCenters));
+        _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+        MLoadDataGrid('tblCostCenters', _oCostCenters, 'Product Type List', 100, 'cboPagination');
+        MLoadComboBoxWithSelect('cboActivityStatus', _oActivityStatus);
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblCostCenters', _oCostCenters, 100, 'cboPagination');
+    });
+    $('#btnAdd').click(function (e) {
+        MWinPickerOpen(1, 'tblCostCenters', 'winEdit', 'RefreshWinObject');
+    });
+    $('#btnEdit').click(function (e) {
+        MWinPickerOpen(2, 'tblCostCenters', 'winEdit', 'RefreshWinObject');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblCostCenters', 'CostCenter', 'Delete');
+    });
+    $('#btnWinClose').click(function (e) {
+        $('#winEdit').window('close');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            MSearch('tblCostCenters', 'txtSearch', 'CostCenter', 'Search');     // only for Enter Press
+        }
+    });
+    $("#btnWinSave").click(function () {
+        MWinPickerSave(MakeObject().CostCenterID, MakeObject(), 'CostCenter', 'Save', 'tblCostCenters','winEdit','')
+    });
+    function RefreshWinObject(obj) {
+        $('#winEdit').window('open');
+        if (obj == null) {
+            $('#txtCostCenterID').val(0);
+            $('#txtCostCenterName').val("");
+            $('#cboActivityStatus').val(0);
+        }
+        else {
+            $('#txtCostCenterID').val(obj.CostCenterID);
+            $('#txtCostCenterName').val(obj.CostCenterName);
+            $('#cboActivityStatus').val(obj.ActivityStatus);
+        }
+    }
+    function MakeObject() {
+        var obj = {
+            CostCenterID: $('#txtCostCenterID').val(),
+            CostCenterName:$('#txtCostCenterName').val(),
+            ActivityStatus: parseInt($('#cboActivityStatus').val()),
+        }
+        return obj;
+    }
+</script>
+
+
+
+
+
+

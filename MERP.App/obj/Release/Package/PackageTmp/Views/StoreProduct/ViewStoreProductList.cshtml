@@ -1,0 +1,74 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblStoreProducts" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'StoreName', width:180, align:'left'">Store Name</th>
+                <th data-options="field:'ProductCode', width:150, align:'left'">Product Code</th>
+                <th data-options="field:'ProductName', width:220, align:'left'">Product Name</th>
+                <th data-options="field:'GoodQty', width:100, align:'right'">Good Qty</th>
+                <th data-options="field:'FaultyQty', width:100, align:'right'">Faulty Qty</th>
+                <th data-options="field:'ScrapQty', width:100, align:'right'">Scrap Qty</th>
+                <th data-options="field:'TransitGoodQty', width:140, align:'right'">Transit Good Qty</th>
+                <th data-options="field:'TransitFaultyQty', width:140, align:'right'">Transit Faulty Qty</th>
+                <th data-options="field:'TransitScrapQty', width:140, align:'right'">Transit Scrap Qty</th>
+                <th data-options="field:'Remarks', width:250, align:'left'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <select id="cboStores" class="form-control-sm" height:30px"></select>
+            <a id="btnSearch" class="easyui-linkbutton" onclick="Search()" data-options="plain:true,iconCls:'icon-search'">Search</a>
+            <a id="btnExcel" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-excel'">Excel</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var _oStoreInfos = [];
+    $(document).ready(function () {
+        SetPageHeader('Product Type Setup');
+        _oStoreInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.StoreInfos));
+        MLoadComboBoxWithSelect('cboStores', _oStoreInfos);
+        //MLoadDataGrid('tblStoreProducts', '', 'Product List', 500, 'cboPagination');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblStoreProducts', _oStoreInfos, 500, 'cboPagination');
+    });
+    function Search() {
+        MLoadDataGridByParentID('tblStoreProducts', $('#cboStores').val(), 'StoreProduct', 'SearchByStore');
+    }
+    $("#btnExcel").click(function () {
+        var oColList = [
+            { headertext: 'Store Name', datatype: 'string', datafield: 'StoreName' },
+            { headertext: 'Product Code', datatype: 'string', datafield: 'ProductCode' },
+            { headertext: 'Product Name', datatype: 'string', datafield: 'ProductName' },
+            { headertext: 'Good Qty', datatype: 'string', datafield: 'GoodQty' },
+            { headertext: 'Faulty Qty', datatype: 'string', datafield: 'FaultyQty' },
+            { headertext: 'Scrap Qty', datatype: 'string', datafield: 'ScrapQty' },
+            { headertext: 'Transit Good Qty', datatype: 'string', datafield: 'TransitGoodQty' },
+            { headertext: 'Transit Faulty Qty', datatype: 'string', datafield: 'TransitFaultyQty' },
+            { headertext: 'Transit Scrap Qty', datatype: 'string', datafield: 'TransitScrapQty' },
+            { headertext: 'Remarks', datatype: 'string', datafield: 'Remarks' }
+        ]
+
+
+        MExcelCustom(MObjList, oColList, 'Stock Report');
+    });
+</script>
+
+
+
+
+
+

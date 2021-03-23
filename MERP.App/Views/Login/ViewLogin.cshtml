@@ -1,0 +1,96 @@
+﻿@{Layout = null;}     @*mandatory*@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobicare ERP</title>
+
+    <link href="~/templateTools/vendor/fontawesome-free/css/all.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/templateTools/css/sb-admin.css" rel="stylesheet" />
+    <script src="~/Scripts/mParser.js"></script>
+    <script src="~/Scripts/mCore.js"></script>
+    <link rel="shortcut icon" href="~/Content/img/CompanyLogo-small.ico" />
+</head>
+
+<body class="bg-dark" style="padding-top: 50px;
+        background: #2b5876; /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #4e4376, #2b5876); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #4e4376, #2b5876); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    ">
+    <div class="container col-md-12" style="height:80%;">
+        <div class="card card-login mx-auto mt-5">
+            <div class="card-header text-center font-weight-bold">
+                <img class="col-lg-6" src="~/Content/img/CompanyLogo.png" />
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="inputEmail">User Name</label>
+                            <input type="email" id="inputEmail" class="form-control" required="required" autofocus="autofocus">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="inputPassword">Password</label>
+                            <input type="password" id="inputPassword" class="form-control"  required="required">
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" value="remember-me">
+                                Remember Password
+                            </label>
+                        </div>
+                    </div>*@
+                    <a class="btn btn-primary btn-block" onclick="Login()">Login</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row col-md-12">
+        <button type="button" class="col-sm-2 btn btn-info" onclick="window.open('http://pms.mobicarebd.com/')">PMS</button>
+        <button type="button" class="col-sm-2 btn btn-warning" onclick="window.open('http://reportportal.edison-bd.com/')">Report Portal</button>
+        <button type="button" class="col-sm-2 btn btn-primary" onclick="window.open('http://csm.edison-bd.com/')">CSM</button>
+        <button type="button" class="col-sm-2 btn btn-success" onclick="window.open('http://msd.mobicarebd.com/')">MSD</button>
+        <button type="button" class="col-sm-2 btn btn-dark" onclick="window.open('http://servicedesk.mobicarebd.com/')">Service Desk</button>
+        <button type="button" class="col-sm-2 btn btn-secondary" onclick="window.open('http://csoms.edison-bd.com/')">CSOMS</button>
+    </div>
+    <script src="~/Scripts/jquery-3.5.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <script src="~/templateTools/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/Scripts/MAuthentication.js"></script>
+    <script src="~/templateTools/sweetalert/sweetalert.min.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //if (localStorage.getItem("MUserName") != null) {
+        //    MSWAL('Session Out', 'your session already expired, please login again !!', 'warning');
+        //    window.location.href = "/Home/Dashboard";
+        //}
+        ClearUserSession();
+    });
+    $("#inputEmail").keydown(function (e) {
+        if (e.keyCode == 13) {
+            Login();
+        }
+    });
+    $("#inputPassword").keydown(function (e) {
+        if (e.keyCode == 13) {
+            Login();
+        }
+    });
+    function Login() {
+        ClearUserSession();
+        var oUser = {
+            UserName: $('#inputEmail').val(),
+            Password: $('#inputPassword').val()
+        }
+        MUserLogin(oUser);
+    }
+</script>

@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "ViewDepartment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <div class="PageBody">
+        <div class="form-row">
+            <div class="form-Department col-md-3">
+                <label for="txtDepartmentName">Department Name:</label>
+                <input type="text" class="form-control col-md-11" id="txtDepartmentName">
+            </div>
+            <div class="form-Department col-md-3">
+                <label for="cboActivityStatus">Activity Status:</label>
+                <select id="cboActivityStatus" class="form-control col-md-11"></select>
+            </div>
+            <div class="form-Department col-md-6">
+                <label for="txtRemarks">Remarks:</label>
+                <input type="text" class="form-control col-md-11" id="txtRemarks">
+            </div>
+        </div>
+        <div class="form-row PageActionButton">
+            <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+            <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+        </div>
+    </div>
+<script type="text/javascript">
+        var _oDepartment = [];
+        var _oContactPersons = [];
+        //var _oLocations = [];
+    var _oActivityStatus = [];
+
+        $(document).ready(function () {
+            debugger;
+            _oDepartment = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Department));
+            _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+            MLoadComboBox('cboActivityStatus', _oActivityStatus);
+            RefreshComponents(_oDepartment);
+            SetPageHeader('Department Information');
+        });
+    function RefreshComponents(obj) {
+        if (obj == null) {
+            $('#txtDepartmentName').val('');
+            $('#txtRemarks').val('');
+            $('#cboActivityStatus').val(0);
+        }
+        else {
+            $('#txtDepartmentName').val(obj.DepartmentName);
+            $('#txtRemarks').val(obj.Remarks);
+            $('#cboActivityStatus').val(obj.ActivityStatus);
+        }
+    }
+        function RefreshObject() {
+            debugger;
+            var oDataObject = {
+                DepartmentID : _oDepartment.DepartmentID,
+                DepartmentName: $('#txtDepartmentName').val(),
+                Remarks: $('#txtRemarks').val(),
+                ActivityStatus: $('#cboActivityStatus').val()
+            };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        debugger;
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'Department', 'Save');
+    });
+</script>

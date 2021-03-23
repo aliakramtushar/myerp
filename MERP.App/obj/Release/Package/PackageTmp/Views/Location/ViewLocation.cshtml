@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "ViewLocation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <div class="PageBody">
+        <div class="form-row">
+            <div class="form-Location col-md-7">
+                <label for="txtLocationName">Location Name:</label>
+                <input type="text" class="form-control col-md-11" id="txtLocationName">
+            </div>
+            <div class="form-Location col-md-5">
+                <label for="cboActivityStatus">Activity Status:</label>
+                <select id="cboActivityStatus" class="form-control col-md-12"></select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-Location col-md-7">
+                <label for="cboDivisions">Division Name:</label>
+                <select id="cboDivisions" class="form-control col-md-11"></select>
+            </div>
+            <div class="form-Location col-md-5">
+                <label for="cboDistricts">District Name:</label>
+                <select id="cboDistricts" class="form-control col-md-12"></select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-Location col-md-12">
+                <label for="txtRemarks">Remarks:</label>
+                <input type="text" class="form-control col-md-12" id="txtRemarks">
+            </div>
+        </div>
+        <div class="form-row PageActionButton">
+            <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+            <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+        </div>
+    </div>
+<script type="text/javascript">
+    var _oLocation = [];
+    var _oDivisions = [];
+    var _oDistricts = [];
+    var _oActivityStatus = [];
+
+        $(document).ready(function () {
+            debugger;
+            _oLocation = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Location));
+            _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+            _oDivisions = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Divisions));
+            _oDistricts = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Districts));
+            MLoadComboBox('cboActivityStatus', _oActivityStatus);
+            MLoadComboBox('cboDivisions', _oDivisions);
+            MLoadComboBox('cboDistricts', _oDistricts);
+            RefreshComponents(_oLocation);
+            SetPageHeader('Location Information');
+        });
+    function RefreshComponents(obj) {
+        if (obj == null) {
+            $('#txtLocationName').val('');
+            $('#txtRemarks').val('');
+            $('#cbdDivisions').val(0);
+            $('#cboDistricts').val(0);
+            $('#cboActivityStatus').val(0);
+        }
+        else {
+            $('#txtLocationName').val(obj.LocationName);
+            $('#txtRemarks').val(obj.Remarks);
+            $('#cboDivisions').val(obj.DivisionID);
+            $('#cboDistricts').val(obj.DistrictID);
+            $('#cboActivityStatus').val(obj.ActivityStatus);
+        }
+    }
+        function RefreshObject() {
+            debugger;
+            var oDataObject = {
+                LocationID : _oLocation.LocationID,
+                LocationName: $('#txtLocationName').val(),
+                Remarks: $('#txtRemarks').val(),
+                ActivityStatus: $('#cboActivityStatus').val(),
+                DivisionID: $('#cboDivisions').val(),
+                DistrictID: $('#cboDistricts').val()
+            };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        debugger;
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'Location', 'Save');
+    });
+</script>

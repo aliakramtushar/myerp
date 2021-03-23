@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\New Development\\Mobicare ERP\\MERP Application\\MERP.Reports\\MERP.Reports.csproj": {}
+  },
+  "projects": {
+    "E:\\New Development\\Mobicare ERP\\MERP Application\\MERP.Reports\\MERP.Reports.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\New Development\\Mobicare ERP\\MERP Application\\MERP.Reports\\MERP.Reports.csproj",
+        "projectName": "MERP.Reports",
+        "projectPath": "E:\\New Development\\Mobicare ERP\\MERP Application\\MERP.Reports\\MERP.Reports.csproj",
+        "packagesPath": "D:\\Users\\ali.akram\\.nuget\\packages\\",
+        "outputPath": "E:\\New Development\\Mobicare ERP\\MERP Application\\MERP.Reports\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "configFilePaths": [
+          "D:\\Users\\ali.akram\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "dependencies": {
+            "EntityFramework": {
+              "target": "Package",
+              "version": "[6.2.0, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

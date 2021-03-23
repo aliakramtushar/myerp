@@ -1,0 +1,33 @@
+﻿@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Out</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+</head>
+<body style="
+        background: #2b5876;
+        background: -webkit-linear-gradient(to right, #4e4376, #2b5876); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #4e4376, #2b5876); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    ">
+
+    <script src="~/Scripts/jquery-3.5.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <script src="~/templateTools/sweetalert/sweetalert.min.js"></script>
+    <script src="~/Scripts/mParser.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        MSWAL_WithReturnMSWAL('Timeout', 'your session time out, please login again', 'warning', true, true, return_fn);
+    });
+    function return_fn() {
+        window.location.href = "/Login/ViewLogin";
+    }
+    </script>

@@ -1,0 +1,245 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblDistricts" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'DistrictName', width:200, align:'left'">District Name</th>
+                <th data-options="field:'DivisionName', width:200, align:'left'">Division Name</th>
+                <th data-options="field:'ActivityStatusSt', width:150, align:'center'">Status</th>
+                <th data-options="field:'Remarks', width:2000, align:'left'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#MModal">
+                    Launch demo modal
+                </button>*@
+        </div>
+    </div>
+</div>
+<!-------------------------------------------------------- Modal ---------------------------------------------------------->
+<div class="modal fade" id="MModal" tabindex="-1" role="dialog" aria-labelledby="MModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="MModalLabel">District Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="PageBody">
+                    <div class="form-row">
+                        <div class="form-District col-md-12">
+                            <label for="txtDistrictName">District Name:</label>
+                            <input type="text" class="form-control col-md-12" id="txtDistrictName">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-District col-md-12">
+                            <label for="cboDivisions">Division Name:</label>
+                            <select id="cboDivisions" class="form-control col-md-12"></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-District col-md-12">
+                            <label for="cboActivityStatus">Activity Status:</label>
+                            <select id="cboActivityStatus" class="form-control col-md-12"></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-District col-md-12">
+                            <label for="txtRemarks">Remarks:</label>
+                            <input type="text" class="form-control col-md-12" id="txtRemarks">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-row PageActionButton">
+                    <button id="btnSaveModal" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+                    <button id="btnBackModal" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oDistricts = [];
+    var _oDistrict = [];
+    var _oDivisions = [];
+    var _oActivityStatus = [];
+
+    $(document).ready(function () {
+        debugger;
+        _oDistricts = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Districts));
+        _oDivisions = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Divisions));
+        _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+        MLoadComboBox('cboDivisions', _oDivisions);
+        MLoadComboBox('cboActivityStatus', _oActivityStatus);
+        MLoadDataGrid('tblDistricts', _oDistricts, 'District List', 100, 'cboPagination');
+        SetPageHeader('District Setup');
+    });
+    function RefreshComponentsModal(obj) {
+        _oDistrict = obj;
+        if (obj == null) {
+            $('#txtDistrictName').val('');
+            $('#txtRemarks').val('');
+            $('#cboDivisions').val(0);
+            $('#cboActivityStatus').val(0);
+        }
+        else {
+            $('#txtDistrictName').val(_oDistrict.DistrictName);
+            $('#txtRemarks').val(_oDistrict.Remarks);
+            $('#cboDivisions').val(_oDistrict.DivisionID);
+            $('#cboActivityStatus').val(_oDistrict.ActivityStatus);
+        }
+    }
+    function RefreshObject() {
+        var oDataObject = {
+            DistrictID: _oDistrict.DistrictID,
+            MModelPK: _oDistrict.DistrictID,
+            DistrictName: $('#txtDistrictName').val(),
+            Remarks: $('#txtRemarks').val(),
+            DivisionID: $('#cboDivisions').val(),
+            ActivityStatus: $('#cboActivityStatus').val()
+        };
+        return oDataObject;
+    }
+    $('#btnAdd').click(function (e) {
+        debugger;
+        MAddModal('tblDistricts', 'District', 'GetByID', 'MModal', 'RefreshComponentsModal');
+    });
+    $('#btnEdit').click(function (e) {
+        MEditModal('tblDistricts', 'District', 'GetByID', 'MModal', 'RefreshComponentsModal');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblDistricts', 'District', 'Delete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblDistricts', 'txtSearch', 'District', 'Search');     // only for Enter Press
+        }
+    });
+    $('#btnSaveModal').click(function (e) {
+        debugger;
+        var oDataObject = RefreshObject();
+        MSaveModal(oDataObject, 'District', 'Save', 'tblDistricts');
+    });
+     $('#btnBackModal').click(function (e) {
+         $('#MModal').modal('hide');
+    });
+
+
+
+
+
+
+    function MSaveModal(obj, controller_Name, action_Name, table_Id) {
+    if (obj == null) { alert('Invalid Object !! Wrong Entry !!') };
+    if (!confirm("Confirm to Save?")) return;
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: '/' + controller_Name + '/' + action_Name,
+        traditional: true,
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            debugger;
+            var retObj = jQuery.parseJSON(data);
+            if (retObj.MModelPK > 0) {
+                alert("Data Saved sucessfully");
+                if (obj.MModelPK == 0)             // add function
+                {
+                    $('#' + table_Id).datagrid('appendRow', retObj);
+                    $('#' + table_Id).datagrid('selectRow', parseInt(sessionStorage.getItem('SelectedRowIndex')));
+                }
+                else {                               // edit function
+                    $('#' + table_Id).datagrid('updateRow', { index: parseInt(sessionStorage.getItem('SelectedRowIndex')), row: retObj });
+                }
+                $('#MModal').modal('hide');
+            }
+            else {
+                alert(retObj.ErrorMessage);
+            }
+        },
+        error: function (xhr, status, error) {
+            alert(error);
+        }
+    });
+}
+    function MAddModal(table_Id, controller_Name, action_Name, modal_Id, objRefreshFunction) {
+        var retObj = [];
+        var obj_List = $('#' + table_Id).datagrid('getRows');
+        sessionStorage.setItem('SelectedRowIndex', obj_List.length);
+        var obj = { MModelPK: 0 }
+        $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: '/' + controller_Name + '/' + action_Name,
+        traditional: true,
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            debugger;
+            retObj = jQuery.parseJSON(data);
+            if (retObj.MModelPK == 0) {
+                $('#' + modal_Id).modal('show');
+                window[objRefreshFunction](retObj);
+            }
+            else {
+                alert(retObj.ErrorMessage);
+            }
+        },
+        error: function (xhr, status, error) {
+            alert(error);
+        }
+    });
+    }
+    function MEditModal(table_Id, controller_Name, action_Name, modal_Id, objRefreshFunction) {
+        debugger;
+        var retObj = [];
+        var obj = $('#' + table_Id).datagrid("getSelected");
+        sessionStorage.setItem('SelectedRowIndex', $('#' + table_Id).datagrid('getRowIndex', obj));
+        if (obj == null || obj.MModelPK <= 0) {
+            alert("Please select an item from list!");
+            return false;
+        }
+        $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: '/' + controller_Name + '/' + action_Name,
+        traditional: true,
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            debugger;
+            retObj = jQuery.parseJSON(data);
+            if (retObj.MModelPK > 0) {
+                $('#' + modal_Id).modal('show');
+                window[objRefreshFunction](retObj);
+            }
+            else {
+                alert(retObj.ErrorMessage);
+            }
+        },
+        error: function (xhr, status, error) {
+            alert(error);
+        }
+    });
+}
+</script>

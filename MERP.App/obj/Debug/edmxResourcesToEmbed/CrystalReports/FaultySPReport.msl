@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="MERPDBModelStoreContainer" CdmEntityContainer="MERPDBEntities">
+    <FunctionImportMapping FunctionImportName="rpt_Faulty_SP_reporting" FunctionName="MERPDBModel.Store.rpt_Faulty_SP_reporting">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="MERPDBModel.rpt_Faulty_SP_reporting_Result">
+          <ScalarProperty Name="Faulty_Type" ColumnName="Faulty Type" />
+          <ScalarProperty Name="Model_No" ColumnName="Model No" />
+          <ScalarProperty Name="LSO_No" ColumnName="LSO No" />
+          <ScalarProperty Name="IMEI_No" ColumnName="IMEI No" />
+          <ScalarProperty Name="CSM_Tracking_No" ColumnName="CSM Tracking No" />
+          <ScalarProperty Name="Consumption_Type" ColumnName="Consumption Type" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="CC_Name" ColumnName="CC Name" />
+          <ScalarProperty Name="Engineer_ID" ColumnName="Engineer ID" />
+          <ScalarProperty Name="Solution_Type" ColumnName="Solution Type" />
+          <ScalarProperty Name="Physical_Damage" ColumnName="Physical Damage" />
+          <ScalarProperty Name="Customer_Reported_Problem" ColumnName="Customer Reported Problem" />
+          <ScalarProperty Name="Engineer_Reported_Problem" ColumnName="Engineer Reported Problem" />
+          <ScalarProperty Name="Action_Taken" ColumnName="Action Taken" />
+          <ScalarProperty Name="Some_Time_Issue_Details__Bengali_is_also_ok_" ColumnName="Some Time Issue Details:(Bengali is also ok)" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+  </EntityContainerMapping>
+</Mapping>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="MERPDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="MERPDBEntities" annotation:LazyLoadingEnabled="true">
+    <FunctionImport Name="rpt_Faulty_SP_reporting" ReturnType="Collection(MERPDBModel.rpt_Faulty_SP_reporting_Result)">
+      <Parameter Name="LSOCode" Mode="In" Type="String" />
+    </FunctionImport>
+  </EntityContainer>
+  <ComplexType Name="rpt_Faulty_SP_reporting_Result">
+    <Property Type="String" Name="Faulty_Type" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Model_No" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="LSO_No" Nullable="false" MaxLength="20" />
+    <Property Type="String" Name="IMEI_No" Nullable="true" MaxLength="25" />
+    <Property Type="Int64" Name="CSM_Tracking_No" Nullable="true" />
+    <Property Type="String" Name="Consumption_Type" Nullable="true" MaxLength="50" />
+    <Property Type="DateTime" Name="Date" Nullable="true" Precision="23" />
+    <Property Type="String" Name="CC_Name" Nullable="false" MaxLength="100" />
+    <Property Type="String" Name="Engineer_ID" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Solution_Type" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Physical_Damage" Nullable="false" MaxLength="3" />
+    <Property Type="String" Name="Customer_Reported_Problem" Nullable="false" />
+    <Property Type="String" Name="Engineer_Reported_Problem" Nullable="true" />
+    <Property Type="String" Name="Action_Taken" Nullable="false" MaxLength="1" />
+    <Property Type="String" Name="Some_Time_Issue_Details__Bengali_is_also_ok_" Nullable="false" MaxLength="1" />
+  </ComplexType>
+</Schema>

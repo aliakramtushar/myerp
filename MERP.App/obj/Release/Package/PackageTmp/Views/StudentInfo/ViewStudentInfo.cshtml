@@ -1,0 +1,312 @@
+﻿
+@{
+    ViewBag.Title = "ViewStudentInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody" style="padding:10px">
+    <div id="pBasicInformation" class="easyui-panel" title="Basic Information" style="width:100%;padding:15px;margin-bottom:20px">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <label for="txtStudentCode">Student Code</label>
+                <input type="text" class="form-control col-md-12" id="txtStudentCode" placeholder="(auto Increment)" disabled>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtStudentFirstName">First Name</label>
+                <input type="text" class="form-control col-md-12" onchange="GetFullName()" id="txtStudentFirstName">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtStudentMiddleName">Middle Name</label>
+                <input type="text" class="form-control col-md-12" onchange="GetFullName()" id="txtStudentMiddleName">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtStudentLastName">Last Name</label>
+                <input type="text" class="form-control col-md-12" onchange="GetFullName()" id="txtStudentLastName">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="txtStudentFullName">Full Name</label>
+                <input type="text" class="form-control col-md-12" id="txtStudentFullName" disabled placeholder="(auto fill)">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtRollNo">Roll No</label>
+                <input type="text" class="form-control col-md-12" id="txtRollNo">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtPassword">Password</label>
+                <input type="password" class="form-control col-md-12" id="txtPassword">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtConfirmPassword">Confirm Password</label>
+                <input type="password" class="form-control col-md-12" id="txtConfirmPassword">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboStudentTypes">Student Type</label>
+                <select id="cboStudentTypes" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtContactNo_1">Contact No(1)</label>
+                <input type="text" class="form-control col-md-12" id="txtContactNo_1">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtContactNo_2">Contact No(2)</label>
+                <input type="text" class="form-control col-md-12" id="txtContactNo_2">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="txtEmail">Email</label>
+                <input type="text" class="form-control col-md-12" id="txtEmail">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboGenders">Gender</label>
+                <select id="cboGenders" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="dtDateOfBirth">Date Of Birth</label>
+                <input class="easyui-datebox col-md-11" id="dtDateOfBirth" data-options="formatter:MDateFormatter,parser:MParser" style="height:38px">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="txtNID">NID</label>
+                <input type="text" class="form-control col-md-12" id="txtNID">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboActivityStatus">Activity Status</label>
+                <select id="cboActivityStatus" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-2">
+                <img id="imgStudentPhotoPath" src="~/Content/img/StudentInfos/merpPerson.jpg" class="rounded float-left" style="height:150px; width:150px">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="fStudentPhotoFile">Student Photo</label>
+                <input type="file" class="col-md-12" id="fStudentPhotoFile" />
+                @*<button id="btnPreview" type="button" style="position:absolute; bottom:0px; left:10px" class="btn btn-secondary  easyui-tooltip" title="Load an Image & see the preview in box" aria-label="Left Align">Preview</button>*@
+            </div>
+        </div>
+    </div>
+    <div id="pOtherInformation" class="easyui-panel" title="Other Information" style="width:100%;padding:15px;margin-bottom:20px">
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="txtFatherName">Father Name</label>
+                <input type="text" class="form-control col-md-12" id="txtFatherName">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="txtMotherName">Mother Name</label>
+                <input type="text" class="form-control col-md-12" id="txtMotherName">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtNationality">Nationality</label>
+                <input type="text" class="form-control col-md-12" id="txtNationality">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="cboReligions">Religion</label>
+                <select id="cboReligions" class="form-control col-md-12"></select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtPresentAddress">Present Address</label>
+                <input type="text" class="form-control col-md-12" id="txtPresentAddress">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="txtPermanentAddress">Permanent Address</label>
+                <input type="text" class="form-control col-md-12" id="txtPermanentAddress">
+            </div>
+        </div>
+    </div>
+    <div id="pIndenticalformation" class="easyui-panel" title="Indentical Information" style="width:100%;padding:15px;">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="txtDrivingLicence">Driving Licence</label>
+                <input type="text" class="form-control col-md-12" id="txtDrivingLicence">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="txtPassport">Passport</label>
+                <input type="text" class="form-control col-md-12" id="txtPassport">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="txtOtherIdentity">Other Identity</label>
+                <input type="text" class="form-control col-md-12" id="txtOtherIdentity">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group col-md-12 PageActionButton">
+    <button id="btnSave" type="button" class="btn btn-success ActionButton easyui-tooltip" title="Save Data" aria-label="Left Align">Save</button>
+    <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+</div>
+<script type="text/javascript">
+    var _oStudentInfo = [];
+    var _oStudentTypes = [];
+    var _oGenderInfos = [];
+    var _oReligions = [];
+    var _oActivityStatus = [];
+        $(document).ready(function () {
+            debugger;
+            _oStudentInfo = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.StudentInfo));
+            _oStudentTypes = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.StudentTypes));
+            _oGenderInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.GenderTypes));
+            _oReligions = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Religions));
+            _oActivityStatus =  @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+            RefreshPageLayout();
+        });
+    function RefreshPageLayout() {
+        SetPageHeader('Student Information');
+        SetPanelHeader('pBasicInformation', 'Basic Information', 'powderblue');
+        SetPanelHeader('pOtherInformation', 'Other Information', 'powderblue');
+        SetPanelHeader('pIndenticalformation', 'Indentical Information', 'powderblue');
+        $('#dtDateOfBirth').datebox({ value: MGetDate(), required: false, showSeconds: false });
+        $('#dtLaunchingDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+        MLoadComboBox('cboStudentTypes', _oStudentTypes);
+        MLoadComboBox('cboGenders', _oGenderInfos);
+        MLoadComboBox('cboReligions', _oReligions);
+        MLoadComboBox('cboActivityStatus', _oActivityStatus);
+        RefreshComponents(_oStudentInfo);
+        GetFullName();
+    }
+    function RefreshComponents(obj)
+    {
+        $('#txtStudentCode').val(obj.StudentCode);
+        $('#txtStudentFirstName').val(obj.StudentFirstName);
+        $('#txtStudentMiddleName').val(obj.StudentMiddleName);
+        $('#txtStudentLastName').val(obj.StudentLastName);
+        $('#txtPassword').val(obj.Password);
+        $('#txtRollNo').val(obj.RollNo);
+        $('#cboStudentTypes').val(obj.StudentType);
+        $('#txtContactNo_1').val(obj.ContactNo_1);
+        $('#txtContactNo_2').val(obj.ContactNo_2);
+        $('#txtEmail').val(obj.Email);
+        $('#txtPresentAddress').val(obj.PresentAddress);
+        $('#txtPermanentAddress').val(obj.PermanentAddress);
+        if (obj.StudentPhotoPath != '') { $("#imgStudentPhotoPath").attr("src", obj.StudentPhotoPath);}
+        $('#cboGenders').val(obj.Gender);
+        $('#dtDateOfBirth').datebox({ value: obj.DateOfBirth, required: false, showSeconds: false });
+        $('#txtNationality').val(obj.Nationality);
+        $('#cboReligions').val(obj.ReligionID);
+        $('#txtFatherName').val(obj.FatherName);
+        $('#txtMotherName').val(obj.MotherName);
+        $('#txtNID').val(obj.NID);
+        $('#txtDrivingLicence').val(obj.DrivingLicence);
+        $('#txtPassport').val(obj.Passport);
+        $('#txtOtherIdentity').val(obj.OtherIdentity);
+        $('#cboActivityStatus').val(obj.ActivityStatus);
+    }
+    function RefreshObject() {
+        var oDataObject = {
+            StudentID: _oStudentInfo.StudentID,
+            StudentCode: $('#txtStudentCode').val(),
+            StudentFirstName: $('#txtStudentFirstName').val(),
+            StudentMiddleName: $('#txtStudentMiddleName').val(),
+            StudentLastName: $('#txtStudentLastName').val(),
+            Password: $('#txtPassword').val(),
+            RollNo: $('#txtRollNo').val(),
+            StudentType: $('#cboStudentTypes').val(),
+            ContactNo_1: $('#txtContactNo_1').val(),
+            ContactNo_2: $('#txtContactNo_2').val(),
+            Email: $('#txtEmail').val(),
+            PresentAddress: $('#txtPresentAddress').val(),
+            PermanentAddress: $('#txtPermanentAddress').val(),
+            Gender: $('#cboGenders').val(),
+            DateOfBirth: MGetDateSt($('#dtDateOfBirth').val()),
+            Nationality: $('#txtNationality').val(),
+            ReligionID: $('#cboReligions').val(),
+            FatherName: $('#txtFatherName').val(),
+            MotherName: $('#txtMotherName').val(),
+            NID: $('#txtNID').val(),
+            DrivingLicence: $('#txtDrivingLicence').val(),
+            Passport: $('#txtPassport').val(),
+            OtherIdentity: $('#txtOtherIdentity').val(),
+            ActivityStatus: $('#cboActivityStatus').val(),
+            StudentPhotoPath: _oStudentInfo.StudentPhotoPath
+        };
+        return oDataObject;
+    }
+    $('#btnPreview').click(function (e) {
+        MBackLink();
+    });
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        var file_data = $("#fStudentPhotoFile").prop("files")[0];
+        if (file_data != undefined) {
+            if (file_data.type != "image/jpeg") {
+                MSWAL('Invalid file type', 'Please Select only JPG/JPEG Format !!', 'warning');
+                return;
+            }
+            if (file_data.size > 100000) {
+                MSWAL('Maximum file size exceeded', 'Please Select a file less than 100kb !!', 'warning');
+                return;
+            }
+        }
+        swal({ title: "Are you sure?", text: "once you save, it will change the database!", icon: "warning", buttons: true, dangerMode: true, })
+            .then((willDelete) => {
+                if (willDelete) {
+                    MGeneralAjaxWithReturnFn(RefreshObject(), 'StudentInfo', 'Save', 'DataSaveValidation');
+                }
+            });
+    });
+    function DataSaveValidation(obj) {
+        if (obj.MModelPK == 0) {
+            MSWAL('Error !', obj.ErrorMessage, 'warning');
+            return;
+        }
+        else if (obj.MModelPK > 0 && obj.ErrorMessage == '') {
+            debugger;
+            var file_data = $("#fStudentPhotoFile").prop("files")[0];
+            if (file_data != undefined) {
+                UploadImage(obj);
+            }
+            else {
+                MSWAL('Success', 'Data Saved Successfully!', 'success');
+                ReloadPageWithStudentID(obj.MModelPK);
+            }
+        }
+        else {
+            MSWAL('Errror !', 'Something Wrong !!', 'warning');
+            return;
+        }
+    }
+    function UploadImage(obj) {
+        debugger;
+        var file_data = $("#fStudentPhotoFile").prop("files")[0];
+        var form_data = new FormData();
+        form_data.append("file", file_data);              // Appending parameter named file with properties of file_field to form_data
+        if (obj.StudentID == 0) {
+            MSWAL('Errror !', 'No Student Selected !!', 'warning');
+            return;
+        }
+        if (obj.StudentCode == '') {
+            MSWAL('Errror !', 'No Student Code !!', 'warning');
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/StudentInfo/UploadImage?nStudentID=" + obj.StudentID,
+            traditional: true,
+            data: (form_data),
+            processData: false,
+            cache: false,
+            contentType: false,
+            success: function (result) {
+                debugger;
+                if (result.ErrorMessage == '') {
+                    MSWAL('Success', 'Data Saved With Image', 'success');
+                    ReloadPageWithStudentID(obj.StudentID);
+                }
+                else {
+                    MSWAL('Error', result.ErrorMessage, 'warning');
+                }
+            },
+        })
+
+    }
+    function ReloadPageWithStudentID(nID) {
+        window.location.href = '/StudentInfo/ViewStudentInfo?nID=' + nID;
+    }
+    function GetFullName() {
+        $('#txtStudentFullName').val($('#txtStudentFirstName').val() + ' ' + $('#txtStudentMiddleName').val() + ' ' + $('#txtStudentLastName').val());
+    }
+</script>
+
+
+
+
+
+
+

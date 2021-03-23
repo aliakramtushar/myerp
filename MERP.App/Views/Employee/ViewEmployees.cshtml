@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblEmployees" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'EmployeeName', width:300, align:'left'">Employee Name</th>
+                <th data-options="field:'Address', width:400, align:'left'">Address Name</th>
+                <th data-options="field:'ActivityStatusSt', width:150, align:'center'">Status</th>
+                <th data-options="field:'Remarks', width:150, align:'center'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oEmployees = [];
+    $(document).ready(function () {
+        debugger;
+        _oEmployees = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Employees));
+        MLoadDataGrid('tblEmployees', _oEmployees, 'Employee List', 100, 'cboPagination');
+        SetPageHeader('Employee Setup');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblEmployees', 'Employee', 'ViewEmployee');
+    });
+    $('#btnEdit').click(function (e) {
+        MEdit('tblEmployees', 'Employee', 'ViewEmployee');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblEmployees', 'Employee', 'Delete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblEmployees', 'txtSearch', 'Employee', 'Search');     // only for Enter Press
+        }
+    });
+</script>
+
+
+
+
+
+

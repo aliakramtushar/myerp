@@ -1,0 +1,129 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblGroups" class="easyui-datagrid"
+           data-options="
+            rownumbers:true,
+            singleSelect:true,
+            collapsible:false,
+            @*rowStyler:function(index,row){
+            if(row.HasAccessSt != 'Yes'){return 'background-color:lightgray;color:black;font-weight:bold;';}
+            },*@
+            toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'GroupName', width:200, align:'left'">Group Name</th>
+                <th data-options="field:'GroupCode', width:120, align:'center'">Group Code</th>
+                <th data-options="field:'GroupDesc', width:300, align:'left'">Description</th>
+                <th data-options="field:'IsInActiveSt', width:120, align:'center'">Status</th>
+                <th data-options="field:'HasAccessSt', width:120, align:'center'">Has Access</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a id="btnReload" class="easyui-linkbutton" onclick="window.location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnMenuMapping" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-man'">Menu Permission</a>
+            <a id="btnReportMapping" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-man'">Report Permission</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<div id="winEdit" class="easyui-window" title="Report List" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:570px; height:450px;">
+    <table id="tblReportMasters" class="easyui-datagrid" style="width:100%; height:340px"
+           data-options="
+                    rownumbers:true,
+                    singleSelect:false,
+                    collapsible:false,
+                    ">
+        <thead>
+            <tr>
+                <th data-options="field:'ck',checkbox:true"></th>
+                <th data-options="field:'ReportName', width:500, align:'left'">Report Name</th>
+            </tr>
+        </thead>
+    </table>
+    <div class="ActionButton">
+        <button id="btnWinUpdate" type="button" class="btn btn-success ActionButton" style="float:right" aria-label="Left Align">Update</button>
+        <button id="btnWinClose" type="button" class="btn btn-danger ActionButton" style="float:right" aria-label="Left Align">Close</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oGroups = [];
+    $(document).ready(function () {
+        debugger;
+        _oGroups = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Groups));
+        MLoadDataGrid('tblGroups', _oGroups, 'Group List', 50, 'cboPagination');
+        SetPageHeader('Group Information');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblGroups', _oGroups, 50, 'cboPagination');
+    });
+    $('#btnMenuMapping').click(function (e) {
+        MEdit('tblGroups', 'Menu', 'ViewGroupMenuMapping');
+    });
+    $('#btnReportMapping').click(function (e) {
+        var obj = $('#tblGroups').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('Warning!', 'Please select an item from list!', 'error');
+            return false;
+        }
+        debugger;
+        MLoadDataGridByParentID('tblReportMasters', '', 'ReportMaster', 'GetsActiveReports');
+        MGeneralAjaxWithReturnFn({ ErrorMessage: obj.MModelPK }, 'GroupReportMapping', 'GetsByGroupID', 'fnReturnPermittedReportList');
+    });
+    function fnReturnPermittedReportList(obj) {
+        if (obj.length > 0) {
+            var rows = $('#tblReportMasters').datagrid('getRows');
+            for (var i = 0; i < rows.length; i++) {
+                for (var j = 0; j < obj.length; j++) {
+                    if (rows[i].ReportMasterID == obj[j].ReportMasterID) {
+                        $('#tblReportMasters').datagrid('checkRow', i);
+                    }
+                }
+            }
+        }
+        $('#winEdit').window('open');
+    }
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblGroups', 'txtSearch', 'Group', 'Search');     // only for Enter Press
+        }
+    });
+    $('#btnWinUpdate').click(function (e) { //tblReportMasters
+        debugger;
+        var obj = $('#tblGroups').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('Warning!', 'Please select an item from list!', 'error');
+            return false;
+        }
+        var oDataObject = {
+            GroupReportMappingID: 0,
+            GroupID: obj.MModelPK,
+            ReportMasterID: 0,
+            ReportMasterIDs: $('#tblReportMasters').datagrid('getSelections').map(function (a) { return a.ReportMasterID; }).join()
+        };
+        MGeneralAjaxWithReturnFn(oDataObject, 'GroupReportMapping', 'SaveByGroupID', 'fnReturnMessage');
+    });
+    function fnReturnMessage(obj) {
+        if (obj.GroupReportMappingID > 0) {
+            MSWAL('Updated', 'Report Permission Updated', 'success');
+            $('#winEdit').window('close');
+        }
+        else {
+            MSWAL('Error', obj.ErrorMessage, 'error');
+        }
+    }
+    $('#btnWinClose').click(function (e) {
+        $('#winEdit').window('close');
+    });
+</script>
+
+
+
+
+
+

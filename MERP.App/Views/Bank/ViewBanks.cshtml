@@ -1,0 +1,63 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblBanks" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'BankName', width:300, align:'left'">Bank Name</th>
+                <th data-options="field:'Address', width:400, align:'left'">Address Name</th>
+                <th data-options="field:'ActivityStatusSt', width:150, align:'center'">Status</th>
+                <th data-options="field:'Remarks', width:150, align:'center'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <a id="btnPrint" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-print'">Print LSO </a>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oBanks = [];
+    $(document).ready(function () {
+        debugger;
+        _oBanks = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Banks));
+        MLoadDataGrid('tblBanks', _oBanks, 'Bank List', 100, 'cboPagination');
+        SetPageHeader('Bank Setup');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblBanks', 'Bank', 'ViewBank');
+    });
+    $('#btnEdit').click(function (e) {
+        MEdit('tblBanks', 'Bank', 'ViewBank');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblBanks', 'Bank', 'Delete');
+    });
+    $("#btnPrint").click(function () {
+        window.open("/Bank/PrintForCheck?str=asdasd'");
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblBanks', 'txtSearch', 'Bank', 'Search');     // only for Enter Press
+        }
+    });
+</script>
+
+
+
+
+
+

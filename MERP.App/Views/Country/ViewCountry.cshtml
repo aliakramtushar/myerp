@@ -1,0 +1,81 @@
+﻿
+@{
+    ViewBag.Title = "ViewCountry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody">
+    <div class="form-row">
+        <div class="form-Country col-md-4">
+            <label for="txtCountryName">Country Name:</label>
+            <input type="text" class="form-control col-md-11" id="txtCountryName">
+        </div>
+        <div class="form-Country col-md-4">
+            <label for="cboContinents">Continents:</label>
+            <select id="cboContinents" class="form-control col-md-11"></select>
+        </div>
+        <div class="form-Country col-md-4">
+            <label for="cboActivityStatus">Activity Status:</label>
+            <select id="cboActivityStatus" class="form-control col-md-12"></select>
+        </div>
+        <div class="form-Country col-md-12">
+            <label for="txtRemarks">Remarks:</label>
+            <input type="text" class="form-control col-md-12" id="txtRemarks">
+        </div>
+    </div>
+    <div class="form-row PageActionButton">
+        <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+        <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+    </div>
+</div>
+<script type="text/javascript">
+        var _oCountry = [];
+    var _oContinents = [];
+    var _oActivityStatus = [];
+
+
+        $(document).ready(function () {
+            debugger;
+            _oCountry = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Country));
+            _oContinents = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Continents));
+            _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+
+            MLoadComboBox('cboContinents', _oContinents);
+            MLoadComboBox('cboActivityStatus', _oActivityStatus);
+            RefreshComponents(_oCountry);
+            SetPageHeader('Country Information');
+        });
+    function RefreshComponents(obj) {
+        if (obj == null) {
+            $('#txtCountryName').val('');
+            $('#txtRemarks').val('');
+            $('#cboContinents').val(0);
+            $('#cboActivityStatus').val(0);
+        }
+        else {
+            $('#txtCountryName').val(obj.CountryName);
+            $('#txtRemarks').val(obj.Remarks);
+            $('#cboContinents').val(obj.ContinentID);
+            $('#cboActivityStatus').val(obj.ActivityStatus);
+        }
+    }
+        function RefreshObject() {
+            debugger;
+            var oDataObject = {
+                CountryID : _oCountry.CountryID,
+                CountryName: $('#txtCountryName').val(),
+                Remarks: $('#txtRemarks').val(),
+                ContinentID: $('#cboContinents').val(),
+                ActivityStatus: $('#cboActivityStatus').val()
+
+            };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        debugger;
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'Country', 'Save');
+    });
+</script>

@@ -1,0 +1,59 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblUsers" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'EmployeeCode', width:100, align:'center'">Employee ID</th>
+                <th data-options="field:'FullName', width:200, align:'left'">Full Name</th>
+                <th data-options="field:'UserCode', width:150, align:'left'">User Code</th>
+                <th data-options="field:'BranchName', width:150, align:'center'">BranchName</th>
+                <th data-options="field:'GroupName', width:180, align:'center'">Group Name</th>
+                <th data-options="field:'UserRoleName', width:180, align:'center'">Role</th>
+                <th data-options="field:'BranchTypeName', width:120, align:'center'">Branch Type</th>
+                <th data-options="field:'MobileNo', width:130, align:'center'">Mobile No</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnMenuMapping" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-man'">Menu Permission</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oUsers = [];
+    $(document).ready(function () {
+        debugger;
+        SetPageHeader('User Setup');
+        _oUsers = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Users));
+        MLoadDataGrid('tblUsers', _oUsers, 'User List', 100, 'cboPagination');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblUsers', _oUsers, 100, 'cboPagination');
+    });
+    $('#btnMenuMapping').click(function (e) {
+        MEdit('tblUsers', 'Menu', 'ViewUserMenuMapping');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblUsers', 'txtSearch', 'User', 'Search');     // only for Enter Press
+        }
+    });
+</script>
+
+
+
+
+
+

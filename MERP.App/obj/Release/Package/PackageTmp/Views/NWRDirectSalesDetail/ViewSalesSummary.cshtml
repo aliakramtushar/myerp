@@ -1,0 +1,111 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblNWRDirectSalesDetails" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'BranchName', width:100, align:'center'">Branch Name</th>
+                <th data-options="field:'BusinessUnitName', width:200, align:'left'">Project Name</th>
+                <th data-options="field:'LSOCode', width:120, align:'left'">Code</th>
+                <th data-options="field:'ShortName', width:120, align:'left'">Product Name</th>
+                <th data-options="field:'SKUName', width:100, align:'left'">SKU Name</th>
+                <th data-options="field:'Unit', width:50, align:'center'">Unit</th>
+                <th data-options="field:'SKUPrice', width:80, align:'right'">SKUPrice</th>
+                <th data-options="field:'InvoiceNo', width:150, align:'left'">Invoice No</th>
+                <th data-options="field:'InvoiceDateSt', width:100, align:'center'">Invoice Date</th>
+                <th data-options="field:'ExchangeReplaceCharge', width:80, align:'right'">Exc/Replace</th>
+                <th data-options="field:'BackupHSCharge', width:80, align:'right'">Backup HS</th>
+                <th data-options="field:'ServiceChargeAmount', width:80, align:'right'">ServiceCharge</th>
+                <th data-options="field:'TotalAmount', width:80, align:'right'">Total</th>
+                <th data-options="field:'DiscountedAmount', width:80, align:'right'">Discount</th>
+                <th data-options="field:'CollectedAmount', width:80, align:'right'">Collected</th>
+                <th data-options="field:'IscashDepositedSt', width:80, align:'right'">Is Deposit</th>
+                <th data-options="field:'DepositDateSt', width:100, align:'center'">Deposit Date</th>
+                <th data-options="field:'DepositBy', width:120, align:'left'">Deposit By</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm" placeholder="Type And Enter">
+            <label for="chkDate">Invoice Date :</label>
+            <input class="easyui-datebox" id="dtDepositStartDate" data-options="formatter:MDateFormatter,parser:MParser" style="width:120px">
+            <label for="dtDepositEndDate">To</label>
+            <input class="easyui-datebox" id="dtDepositEndDate" data-options="formatter:MDateFormatter,parser:MParser" style="width: 120px">
+            <a id="btnSearch" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'">Search</a>
+            <a id="btnExcel" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-excel'">Excel</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oNWRDirectSalesDetails = [];
+    $(document).ready(function () {
+        SetPageHeader('Sales Details Summary');
+        MLoadDataGrid('tblNWRDirectSalesDetails', _oNWRDirectSalesDetails, 'NWRDirectSalesDetail List', 100, 'cboPagination');
+        $('#dtDepositStartDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+        $('#dtDepositEndDate').datebox({ value: MGetDate(), required: false, showSeconds: false });
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblNWRDirectSalesDetails', MObjList, 1000, 'cboPagination');
+    });
+    $("#btnSearch").click(function () {
+        var obj = {
+            ErrorMessage: $('#txtSearch').val() + '~' + 'true' + '~' + $('#dtDepositStartDate').datebox('getValue') + '~' + $('#dtDepositEndDate').datebox('getValue')
+        }
+        MGetsTable(obj, 'NWRDirectSalesDetail', 'Search', 'tblNWRDirectSalesDetails', '', 1000, 'cboPagination');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            var obj = {
+                ErrorMessage: $('#txtSearch').val() + '~' + 'false' + '~' + $('#dtDepositStartDate').datebox('getValue') + '~' + $('#dtDepositEndDate').datebox('getValue')
+            }
+            MGetsTable(obj, 'NWRDirectSalesDetail', 'Search', 'tblNWRDirectSalesDetails', '', 1000, 'cboPagination');
+        }
+    });
+    $("#btnExcel").click(function () {
+        var oColList = [
+            { headertext: 'Branch Name', datatype: 'string', datafield: 'BranchName' },
+            { headertext: 'Project Name', datatype: 'string', datafield: 'BusinessUnitName' },
+            { headertext: 'LSO Code', datatype: 'string', datafield: 'LSOCode' },
+            { headertext: 'Short Name', datatype: 'string', datafield: 'ShortName' },
+            { headertext: 'SKU Name', datatype: 'string', datafield: 'SKUName' },
+            { headertext: 'Unit', datatype: 'string', datafield: 'Unit' },
+            { headertext: 'SKU Price', datatype: 'string', datafield: 'SKUPrice' },
+            { headertext: 'Invoice No', datatype: 'string', datafield: 'InvoiceNo' },
+            { headertext: 'Invoice Date', datatype: 'string', datafield: 'InvoiceDateSt' },
+            { headertext: 'Exchange Replace Charge', datatype: 'string', datafield: 'ExchangeReplaceCharge' },
+            { headertext: 'Backup HS Charge', datatype: 'string', datafield: 'BackupHSCharge' },
+            { headertext: 'Service Charge Amount', datatype: 'string', datafield: 'ServiceChargeAmount' },
+            { headertext: 'Total Amount', datatype: 'string', datafield: 'TotalAmount' },
+            { headertext: 'Discounted Amount', datatype: 'string', datafield: 'DiscountedAmount' },
+            { headertext: 'Collected Amount', datatype: 'string', datafield: 'CollectedAmount' },
+            { headertext: 'Is Cash Deposited', datatype: 'string', datafield: 'IscashDepositedSt' },
+            { headertext: 'Deposit Date', datatype: 'string', datafield: 'DepositDateSt' }
+        ]
+        MExcelCustom(MObjList, oColList,'Sales Summary Details');
+    });
+
+    //$('#chkDate').change(function () {
+    //    if ($('#chkDate').is(":checked")) {
+    //        //alert($('#chkDate').is(':checked'));
+    //    }
+    //    else {
+    //        //alert($('#chkDate').is(':checked'));
+
+    //    }
+    //});
+</script>
+
+
+
+
+
+

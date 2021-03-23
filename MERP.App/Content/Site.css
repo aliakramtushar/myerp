@@ -1,0 +1,73 @@
+﻿body {
+    /*padding-top: 50px;
+    padding-bottom: 20px;*/
+    /*width:99vw*/
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/*-----------------------------------------------Custom CSS------------------------------------------------------*/
+.PageHeader {
+    /*background-color: dimgrey;*/
+    max-width: inherit;
+    height: 26px;
+    color: white;
+    padding-left: 15px;
+    font-weight: bold;
+    border-radius: 7px;
+    font-size: 16px;
+    background: #00F260; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #0575E6, #00F260); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #0575E6, #00F260); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.PageFooter {
+    height: 35px;
+    background: #24C6DC; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #514A9D, #24C6DC); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #514A9D, #24C6DC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.PageFooterLabel {
+    text-align: center;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    color: white
+}
+
+.PageBody {
+    background-color: whitesmoke;
+    padding: 25px;
+}
+
+.PageActionButtonDiv {
+    margin-top: 10px;
+}
+.mpZero{
+    margin:0px;
+    padding:0px;
+}
+/*------------------------------------------------Button----------------------------------------------------------*/
+.ActionButton {
+    margin: 10px 5px;
+    min-width: 80px
+}

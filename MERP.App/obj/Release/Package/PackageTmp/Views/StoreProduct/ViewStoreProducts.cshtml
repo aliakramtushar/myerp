@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblStoreInfos" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'StoreCode', width:80, align:'center'">Code</th>
+                <th data-options="field:'StoreName', width:220, align:'left'">Store Name</th>
+                <th data-options="field:'ShortName', width:150, align:'left'">Short Name</th>
+                <th data-options="field:'Address', width:400, align:'left'">Address</th>
+                <th data-options="field:'IsInActiveSt', width:100, align:'center'">In Active</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAddProducts" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">Add Product</a>
+            <a id="btnDeleteProducts" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete Product</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oStoreInfos = [];
+    $(document).ready(function () {
+        SetPageHeader('Store List');
+        _oStoreInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.StoreInfos));
+        MLoadDataGrid('tblStoreInfos', _oStoreInfos, 'Store List', 100, 'cboPagination');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblStoreInfos', _oStoreInfos, 100, 'cboPagination');
+    });
+    $('#btnAddProducts').click(function (e) {
+        MEdit('tblStoreInfos', 'StoreProduct','ViewStoreProductAdd');
+    });
+    $('#btnDeleteProducts').click(function (e) {
+        MEdit('tblStoreInfos', 'StoreProduct', 'ViewStoreProductDelete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            MSearch('tblStoreInfos', 'txtSearch', 'StoreInfo', 'Search');     // only for Enter Press
+        }
+    });
+</script>
+
+
+
+
+
+

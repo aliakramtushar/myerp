@@ -1,0 +1,74 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblTreeMenus" title="" class="easyui-treegrid"
+           data-options="
+           idField:'id',
+           treeField:'text',
+           animate:false,
+           checkbox: true,
+           lines: true,
+           onDblClickRow:function (rowIndex, rowData){$('#tblTreeMenus').treegrid('toggle', rowIndex.id)}">
+        <thead>
+            <tr>
+                <th field="text" width="280">Menu Name</th>
+                <th field="ControllerName" width="200">Controller Name</th>
+                <th field="ActionName" width="260">Action Name</th>
+                <th field="MenuSequence" width="80" align="center">Sequence</th>
+                <th field="ActivityStatusSt" width="200" align="center">Activity Status</th>
+            </tr>
+        </thead>
+    </table>
+    <div class="col-12 PageActionButton">
+        <button id="btnUpdateAccess" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Update Access</button>
+        <button id="btnBack" type="button" onclick="window.location.href = localStorage.getItem('BackLink')" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oMenus = [];
+    var _GroupMenus = [];
+    var _oGroup = [];
+    var _sTreeMenuIDs = "";
+    $(document).ready(function () {
+        debugger;
+        _oMenus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Menus));
+        _GroupMenus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.GroupMenus));
+        _oGroup = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Group));
+        SetPageComponents();
+    });
+    function SetPageComponents() {
+        MLoadTreeGrid('tblTreeMenus', _oMenus);
+        SetPageHeader('Group Wise Menu Mapping For Group : ' + _oGroup.GroupName);
+        if (_GroupMenus.length > 0)
+        {
+            for (var j = 0; j < _GroupMenus.length; j++) {
+                $('#tblTreeMenus').treegrid('checkNode', _GroupMenus[j].MenuID);
+            }
+        }
+    }
+    $('#btnUpdateAccess').click(function (e) {
+        var obj = $('#tblTreeMenus').treegrid('getCheckedNodes');
+        _sTreeMenuIDs = "";
+        for (var i = 0; i < obj.length; i++) {
+            GetParent(obj[i]);
+        }
+        var sMenuIDArray = _sTreeMenuIDs.substring(0, _sTreeMenuIDs.length - 1).split(",");
+        _oGroup.ErrorMessage = [...new Set(sMenuIDArray)].join(",");
+        MSave(_oGroup, 'GroupMenuMapping', 'SaveGroupMenuMapping');
+    });
+    function GetParent(obj) {
+        _sTreeMenuIDs = obj.id + ',' + _sTreeMenuIDs;
+        if (obj.parentid != 0)
+        {
+            var parentObj = $('#tblTreeMenus').treegrid('find', obj.parentid);
+            GetParent(parentObj);
+        }
+    }
+</script>
+
+
+
+
+
+

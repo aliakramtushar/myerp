@@ -1,0 +1,117 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <div class="easyui-accordion" data-options="fit:false,border:true,selected:false">
+        <div title="Project & Bank Account Linkup (New)" style="padding:10px;">
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    <label for="cboBusinessUnits">Project Name</label>
+                    <select id="cboBusinessUnits" class="form-control col-md-12"></select>
+                </div>
+                <div class="form-group col-md-2">
+                    <button id="btnSave" type="button" class="btn btn-success" style="width: 100%; height: 100%;"><i style="font-size:45px" class="fas fa-exchange-alt"></i></button>
+                </div>
+                <div class="form-group col-md-5">
+                    <label for="cboBankAccountMappings">Corresponding Bank Account</label>
+                    <select id="cboBankAccountMappings" class="form-control col-md-12"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table id="tblBUBankAccountMappings" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:true,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'BusinessUnitName', width:220, align:'left'">Project Name</th>
+                <th data-options="field:'BankAccountNo', width:180, align:'left'">Bank Account No</th>
+                <th data-options="field:'BankAccountName', width:280, align:'left'">Bank Account Name</th>
+                <th data-options="field:'BankName', width:280, align:'left'">Bank Name</th>
+                <th data-options="field:'IsActiveSt', width:80, align:'left'">Activity</th>
+
+
+                
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnInActive" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-undo'">In Active</a>
+            <a id="btnActive" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-redo'">Active</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oBUBankAccountMappings = [];
+    var _oBusinessUnits = [];
+    var _oBankAccountMappings = [];
+
+    $(document).ready(function () {
+        debugger;
+        SetPageHeader('Project Names');
+        _oBUBankAccountMappings = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BUBankAccountMappings));
+        _oBusinessUnits = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BusinessUnits));
+        _oBankAccountMappings = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankAccountMappings));
+        MLoadDataGrid('tblBUBankAccountMappings', _oBUBankAccountMappings, 'BUBankAccountMapping List');
+        MLoadComboBoxWithSelect('cboBusinessUnits', _oBusinessUnits);
+        MLoadComboBoxWithSelect('cboBankAccountMappings', _oBankAccountMappings);
+    });
+    $("#btnSave").click(function () {
+        if ($('#cboBusinessUnits').val() == 0) {
+            MSWAL_WithFocus('Warning', 'Please Select Any Project Name', 'warning', 'cboBusinessUnits');
+            return;
+        }
+        if ($('#cboBankAccountMappings').val() == 0) {
+            MSWAL_WithFocus('Warning', 'Please Select Any Bank Account', 'warning', 'cboBankAccountMappings');
+            return;
+        }
+        var obj = {
+            BUBankAccountMappingID:0,
+            BusinessUnitID: $('#cboBusinessUnits').val(),
+            BankAccountMappingID: $('#cboBankAccountMappings').val(),
+            IsActive : 1
+        }
+        MWinPickerSave(0,obj, 'BUBankAccountMapping', 'Save', 'tblBUBankAccountMappings', '', '');
+    });
+    $("#btnInActive").click(function () {
+        var obj = $('#tblBUBankAccountMappings').datagrid("getSelected");
+        if (obj.IsActive == 0) {
+            MSWAL('Error', 'Already InActive !!', 'error');
+            return;
+        }
+        obj.IsActive = 0;
+        MWinPickerSave(1, obj, 'BUBankAccountMapping', 'Save', 'tblBUBankAccountMappings', '', '');
+    });
+    $("#btnActive").click(function () {
+        var obj = $('#tblBUBankAccountMappings').datagrid("getSelected");
+        if (obj.IsActive == 1) {
+            MSWAL('Error', 'Already Active !!', 'error');
+            return;
+        }
+        obj.IsActive = 1;
+        MWinPickerSave(1, obj, 'BUBankAccountMapping', 'Save', 'tblBUBankAccountMappings', '', '');
+    });
+    $("#btnDelete").click(function () {
+        MDelete('tblBUBankAccountMappings', 'BUBankAccountMapping', 'Delete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblBUBankAccountMappings', 'txtSearch', 'BUBankAccountMapping', 'Search');     // only for Enter Press
+        }
+    });
+
+</script>
+
+
+
+
+
+

@@ -1,0 +1,136 @@
+﻿
+@{
+    ViewBag.Title = "ViewGroup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody">
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="txtGroupName">Group Name:</label>
+            <input type="text" class="form-control col-md-11" id="txtGroupName">
+        </div>
+        <div class="form-group col-md-9">
+            <label for="txtGroupAddress">Group Address:</label>
+            <input type="text" class="form-control col-md-12" id="txtGroupAddress">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="txtPrefix">Prefix:</label>
+            <input type="text" class="form-control col-md-11" id="txtPrefix">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="txtPhone">Phone:</label>
+            <input type="text" class="form-control col-md-11" id="txtPhone">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="txtMobile">Mobile:</label>
+            <input type="text" class="form-control col-md-11" id="txtMobile">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="txtFax">Fax:</label>
+            <input type="text" class="form-control col-md-12" id="txtFax">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="txtEmail">Email:</label>
+            <input type="email" class="form-control col-md-11" id="txtEmail">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="txtWeb">Web:</label>
+            <input type="text" class="form-control col-md-11" id="txtWeb">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="cboContactPersons">Contact Person:</label>
+            <select id="cboContactPersons" class="form-control col-md-11"></select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="cboActivityStatus">Activity Status:</label>
+            <select id="cboActivityStatus" class="form-control col-md-12"></select>
+        </div>
+    </div>
+    @*<div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="cboLocations">Location:</label>
+                <select id="cboLocations" class="form-control col-md-11"></select>
+            </div>
+        </div>*@
+    <div class="form-row PageActionButton">
+        <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+        <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+    </div>
+</div>
+<script type="text/javascript">
+        var _oGroup = [];
+        var _oContactPersons = [];
+        //var _oLocations = [];
+    var _oActivityStatus = [];
+
+        $(document).ready(function () {
+            debugger;
+            _oGroup = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Group));
+            _oContactPersons = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ContactPersons));
+            //_oLocations = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Locations));
+            _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+            MLoadComboBox('cboContactPersons', _oContactPersons);
+            //MLoadComboBox('cboLocations', _oLocations);
+            MLoadComboBox('cboActivityStatus', _oActivityStatus);
+            RefreshComponents(_oGroup);
+            SetPageHeader('Group Information');
+        });
+    function RefreshComponents(obj) {
+        if (obj == null) {
+            $('#txtGroupName').val('');
+            $('#txtGroupAddress').val('');
+            $('#txtPhone').val('');
+            $('#txtMobile').val('');
+            $('#txtFax').val('');
+            $('#txtEmail').val('');
+            $('#txtPrefix').val('');
+            $('#txtWeb').val('');
+            $('#cboActivityStatus').val(0);
+            //$('#cboLocations').val(0);
+            $('#cboContactPersons').val(0);
+
+        }
+        else {
+            $('#txtGroupName').val(obj.GroupName);
+            $('#txtGroupAddress').val(obj.GroupAddress);
+            $('#txtPhone').val(obj.Phone);
+            $('#txtMobile').val(obj.Mobile);
+            $('#txtFax').val(obj.Fax);
+            $('#txtEmail').val(obj.Email);
+            $('#txtWeb').val(obj.Web);
+            $('#txtPrefix').val(obj.Prefix);
+            $('#cboActivityStatus').val(obj.ActivityStatus);
+            //$('#cboLocations').val(obj.LocationID);
+            $('#cboContactPersons').val(obj.ContactPersonID);
+        }
+    }
+        function RefreshObject() {
+            debugger;
+            var oDataObject = {
+                GroupID : _oGroup.GroupID,
+                GroupName: $('#txtGroupName').val(),
+                GroupAddress: $('#txtGroupAddress').val(),
+                Phone : $('#txtPhone').val(),
+                Mobile : $('#txtMobile').val(),
+                Fax : $('#txtFax').val(),
+                Email : $('#txtEmail').val(),
+                Web : $('#txtWeb').val(),
+                ContactPersonID: $('#cboContactPersons').val(),
+                Prefix: $('#txtPrefix').val(),
+                //LocationID: $('#cboLocations').val(),
+                ActivityStatus: $('#cboActivityStatus').val()
+            };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'Group', 'Save');
+    });
+</script>

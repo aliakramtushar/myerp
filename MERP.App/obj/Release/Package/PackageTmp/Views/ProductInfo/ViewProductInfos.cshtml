@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblProductInfos" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'ProductCode', width:120, align:'center'">Code</th>
+                <th data-options="field:'ProductName', width:200, align:'left'">Product Name</th>
+                <th data-options="field:'ShortName', width:100, align:'left'">Short Name</th>
+                <th data-options="field:'SerialNo', width:120, align:'center'">Serial No</th>
+                <th data-options="field:'TagNo', width:120, align:'center'">Tag No</th>
+                <th data-options="field:'BrandName', width:120, align:'center'">Brand</th>
+                <th data-options="field:'ModelNo', width:150, align:'left'">Model No</th>
+                <th data-options="field:'ProductTypeName', width:150, align:'center'">Product Type</th>
+                <th data-options="field:'ProductCategoryName', width:150, align:'center'">Category</th>
+                <th data-options="field:'ProductSubCategoryName', width:150, align:'center'">Sub Category</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oProductInfos = [];
+    $(document).ready(function () {
+        SetPageHeader('Product List');
+        _oProductInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ProductInfos));
+        MLoadDataGrid('tblProductInfos', _oProductInfos, 'ProductInfo List', 100, 'cboPagination');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblProductInfos', _oProductInfos, 100, 'cboPagination');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblProductInfos', 'ProductInfo', 'ViewProductInfo');
+    });
+    $('#btnEdit').click(function (e) {
+        MEdit('tblProductInfos', 'ProductInfo', 'ViewProductInfo');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblProductInfos', 'ProductInfo', 'Delete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            MSearch('tblProductInfos', 'txtSearch', 'ProductInfo', 'Search');     // only for Enter Press
+        }
+    });
+
+</script>
+
+
+
+
+
+

@@ -1,0 +1,311 @@
+﻿
+@{
+    ViewBag.Title = "ViewBankDepositMaster";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="PageBody" style="padding:10px">
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="cboBranchs">Branch Name</label>
+            <select id="cboBranchs" class="form-control col-md-12"></select>
+        </div>
+
+        <div class="form-group col-md-3">
+            <label for="dtDepositDate">Deposit Date</label>
+            <input class="easyui-datebox col-md-12" id="dtDepositDate" data-options="formatter:MDateFormatter,parser:MParser" style="height:38px">
+
+        </div>
+        <div class="form-group col-md-3">
+            <label for="cboPaymentMedias">Payment Media</label>
+            <select id="cboPaymentMedias" class="form-control col-md-12"></select>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="txtRefNo">Ref No</label>
+            <input type="text" class="form-control col-md-12" id="txtRefNo">
+        </div>
+
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="cboBankAccountMappings">Bank Account</label>
+            <select id="cboBankAccountMappings" class="form-control col-md-12"></select>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="txtRemarks">Remarks</label>
+            <input type="text" class="form-control col-md-12" id="txtRemarks">
+        </div>
+    </div>
+
+</div>
+<div class="form-row">
+    <div class="form-group col-md-9">
+        <table id="tblBankDepositMasterDetails" class="easyui-datagrid" style="width:100%"
+               data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar',
+    onDblClickRow:function(){ChildEdit()}">
+            <thead>
+                <tr>
+                    <th data-options="field:'BusinessUnitName', width:200, align:'left'">Project Name</th>
+                    <th data-options="field:'DepositAmount', width:130, align:'right'">Deposit Amount</th>
+                    <th data-options="field:'Remarks', width:400, align:'center'">Remarks</th>
+                </tr>
+            </thead>
+        </table>
+        <div id="toolbar">
+            <div class="easyui-panel form-row">
+                <div class="form-group col-md-3">
+                    <label for="cboBusinessUnits" style="font-weight:bold">Project Name</label>
+                    <select id="cboBusinessUnits" class="form-control-sm col-md-12"></select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="txtDepositAmount" style="font-weight:bold">Deposit Amount</label>
+                    <input type="number" id="txtDepositAmount" class="form-control-sm col-md-12">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="txtGridRemarks" style="font-weight:bold">Remarks</label>
+                    <input type="text" id="txtGridRemarks" class="form-control-sm col-md-12">
+                </div>
+                <div class="form-group col-md-2" style="margin:auto">
+                    <a id="btnAdd" class="easyui-linkbutton" data-options="plain:false,iconCls:'icon-add'" style="margin:auto"></a>
+                    <a id="btnEdit" onclick="ChildEdit()" class="easyui-linkbutton" data-options="plain:false,iconCls:'icon-edit'" style="margin:auto"></a>
+                    <a id="btnDelete" class="easyui-linkbutton" data-options="plain:false,iconCls:'icon-remove'" style="margin: auto"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-md-3">
+        <div class="form-group col-md-12" style="background-color:lavender; padding:20px">
+            <div class="form-group col-md-12">
+                <label for="txtTotalDepositAmount" style="font-weight:bold; text-align:right">Total Deposit Amount</label>
+                <input type="text" id="txtTotalDepositAmount" class="form-control col-md-12" style="font-weight:bold;" placeholder="0.00" disabled>
+            </div>
+            <div class="form-group col-md-12 PageActionButton">
+                <button id="btnSave" type="button" class="btn btn-success ActionButton" aria-label="Left Align">Save</button>
+                <button id="btnBack" type="button" class="btn btn-danger ActionButton" aria-label="Left Align">Back</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="winEdit" class="easyui-window" title="Edit Project's Deposit Money" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:300px; height:380px; padding:20px">
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="cboWinBusinessUnits" style="font-weight:bold">Project Name</label>
+            <select id="cboWinBusinessUnits" class="form-control-sm col-md-12"></select>
+        </div>
+        <div class="form-group col-md-12">
+            <label for="txtWinDepositAmount" style="font-weight:bold">Deposit Amount</label>
+            <input type="number" id="txtWinDepositAmount" class="form-control-sm col-md-12">
+        </div>
+        <div class="form-group col-md-12">
+            <label for="txtWinGridRemarks" style="font-weight:bold">Remarks</label>
+            <input type="text" id="txtWinGridRemarks" class="form-control-sm col-md-12">
+        </div>
+        <div class="form-group col-md-12 ActionButton">
+            <button id="btnWinUpdate" type="button" class="btn btn-success ActionButton col-md-5" style="float:right" aria-label="Left Align">Update</button>
+            <button id="btnWinClose" type="button" class="btn btn-danger ActionButton col-md-5" style="float:right" aria-label="Left Align">Close</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oBranchs = [];
+    var _oPaymentMedias = [];
+    var _oBankAccountMappings = [];
+    var _oBusinessUnits = [];
+    var _oBankDepositMaster = [];
+        $(document).ready(function () {
+            debugger;
+            SetPageHeader('Bank Deposit Panel');
+
+            _oBranchs = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Branchs));
+            _oPaymentMedias = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.PaymentMedias));
+            _oBankAccountMappings = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankAccountMappings));
+            _oBusinessUnits = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BusinessUnits));
+            _oBankDepositMaster = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankDepositMaster));
+
+            MLoadComboBox('cboBranchs', _oBranchs);
+            MLoadComboBox('cboPaymentMedias', _oPaymentMedias);
+            MLoadComboBoxWithSelect('cboBankAccountMappings', _oBankAccountMappings);
+            MLoadComboBoxWithSelect('cboBusinessUnits', _oBusinessUnits);
+            RefreshComponents(_oBankDepositMaster);
+            $('#cboBusinessUnits').val(0);
+        });
+    function RefreshComponents(obj) {
+        if (obj.BankDepositMasterID == 0) {
+                $('#txtBankBranchName').val('');
+                $('#cboBankAccountMappings').val(0);
+                $('#txtBankAccountNo').val('');
+                $('#txtRemarks').val('');
+                MLoadDataGrid('tblBankDepositMasterDetails', [], '')
+                $("#btnSave").html('Save');
+                $('#dtDepositDate').datebox({ value: obj.DepositDateSt, required: false, showSeconds: false });
+            }
+            else {
+            debugger;
+            $('#dtDepositDate').datebox('setValue', obj.DepositDateSt);
+                $('#cboPaymentMedias').val(obj.PaymentMedia);
+                $('#txtRefNo').val(obj.RefNo);
+                $('#cboBankAccountMappings').val(obj.BankAccountMappingID);
+                $('#txtRemarks').val(obj.Remarks);
+                $('#txtTotalDepositAmount').val(obj.TotalDepositAmount)
+                $('#tblBankDepositMasterDetails').datagrid('getRows');
+                MLoadDataGrid('tblBankDepositMasterDetails', obj.BankDepositDetails, '');
+                $("#btnSave").html('Update');
+            }
+        }
+    function RefreshObject() {
+            debugger;
+            var oDataObject = {
+                BankDepositMasterID: _oBankDepositMaster.BankDepositMasterID,
+                BranchID: $('#cboBranchs').val(),
+                DepositDate: $('#dtDepositDate').val(),
+                PaymentMedia: $('#cboPaymentMedias').val(),
+                RefNo: $('#txtRefNo').val(),
+                BankAccountMappingID: $('#cboBankAccountMappings').val(),
+                Remarks: $('#txtRemarks').val(),
+                TotalDepositAmount: $('#txtTotalDepositAmount').val(),
+                BankDepositDetails: $('#tblBankDepositMasterDetails').datagrid('getRows')
+            };
+        return oDataObject;
+    }
+    $('#btnBack').click(function (e) {
+        MBackLink();
+    });
+    $('#btnSave').click(function (e) {
+        if ($('#cboBranchs').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Please Select Any Branch!!', 'error','cboBranchs');
+            $('#cboBranchs').focus();
+            return;
+        }
+        if ($('#dtDepositDate').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Deposit Date!!', 'error','dtDepositDate');
+            $('#dtDepositDate').focus();
+            return;
+        }
+        if ($('#cboPaymentMedias').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Payment Media!!', 'error','cboPaymentMedias');
+            $('#cboPaymentMedias').focus();
+            return;
+        }
+        if ($('#cboBankAccountMappings').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Bank Account!!', 'error','cboBankAccountMappings');
+            $('#cboBankAccountMappings').focus();
+            return;
+        }
+        if ($('#txtTotalDepositAmount').val() == 0) {
+            MSWAL_WithFocus('Warning!', 'Zero Amount Cant Be Deposited!!', 'error','txtTotalDepositAmount');
+            $('#txtTotalDepositAmount').focus();
+            return;
+        }
+        if ($('#tblBankDepositMasterDetails').datagrid('getRows').length == 0) {
+            MSWAL('Warning!', 'There is no data in details!!', 'error');
+            return;
+        }
+        var objList = $('#tblBankDepositMasterDetails').datagrid('getRows');
+        for (var i = 0; i < objList.length; i++) {
+            if (objList[i].BusinessUnitID == $('#cboBusinessUnits').val()) {
+                MSWAL('Warning!', 'Duplicate Project Name', 'error');
+                return;
+            }
+        }
+        var oDataObject = RefreshObject();
+        MSave(oDataObject, 'BankDepositMaster', 'Save');
+    });
+    $('#btnAdd').click(function (e) {
+        debugger;
+        if ($('#cboBusinessUnits').val() == 0 || $('#cboBusinessUnits').val() == undefined) {
+            MSWAL('Warning!', 'Please Select The Business Name!!', 'error');
+            return;
+        }
+        if ($('#txtDepositAmount').val() == "" || $('#txtDepositAmount').val() <= 0 || $('#txtDepositAmount').val() == null || $('#txtDepositAmount').val() == undefined) {
+            MSWAL('Warning!', 'Please Enter Deposit Amount !!', 'error');
+            return;
+        }
+        var objList = $('#tblBankDepositMasterDetails').datagrid('getRows');
+        for (var i = 0; i < objList.length; i++) {
+            if (objList[i].BusinessUnitID == $('#cboBusinessUnits').val()) {
+                MSWAL('Warning!', 'Duplicate Project Name', 'error');
+                return;
+            }
+        }
+        var obj = {
+            BankDepositDetailID: 0,
+            BankDepositMasterID: _oBankDepositMaster.BankDepositMasterID,
+            BusinessUnitID: $('#cboBusinessUnits').val(),
+            BusinessUnitName: $("#cboBusinessUnits option:selected").text(),
+            DepositAmount: $('#txtDepositAmount').val(),
+            Remarks: $('#txtGridRemarks').val(),
+            MModelPK : 0
+        }
+        $('#tblBankDepositMasterDetails').datagrid('appendRow', obj);
+        UpdateChildGrid();
+    });
+    $('#btnDelete').click(function (e) {
+        MDeleteOnlyFront('tblBankDepositMasterDetails');
+        UpdateChildGrid();
+    });
+    function UpdateChildGrid() {
+        var objList = $('#tblBankDepositMasterDetails').datagrid('getRows');
+        var nTotalAmount = 0.00;
+        for (var i = 0; i < objList.length; i++) {
+            nTotalAmount = Number(nTotalAmount) + Number(objList[i].DepositAmount);
+        }
+        $('#txtTotalDepositAmount').val(nTotalAmount);
+        $('#cboBusinessUnits').val(0);
+        $('#txtDepositAmount').val('');
+        $('#txtGridRemarks').val('');
+    }
+    function ChildEdit() {
+        var obj = $('#tblBankDepositMasterDetails').datagrid("getSelected");
+        if (obj == null) {
+            MSWAL('Warning!', 'Please select an item from list!', 'error');
+            return false;
+        }
+        $('#winEdit').window('open');
+        MLoadComboBox('cboWinBusinessUnits', _oBusinessUnits);
+        MLoadComboBox('cboWinBusinessUnits', _oBusinessUnits);
+        $('#cboWinBusinessUnits').val(obj.BusinessUnitID);
+        $('#txtWinDepositAmount').val(obj.DepositAmount);
+        $('#txtWinGridRemarks').val(obj.Remarks);
+    }
+    $('#btnWinUpdate').click(function (e) {
+        if ($('#cboWinBusinessUnits').val() == 0 || $('#cboWinBusinessUnits').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please Select The Business Name!!', 'error','cboWinBusinessUnits');
+            return;
+        }
+        if ($('#txtWinDepositAmount').val() == "" || $('#txtWinDepositAmount').val() <= 0 || $('#txtWinDepositAmount').val() == null || $('#txtWinDepositAmount').val() == undefined) {
+            MSWAL_WithFocus('Warning!', 'Please Enter Deposit Amount !!', 'error','txtWinDepositAmount');
+            return;
+        }
+        var objList = $('#tblBankDepositMasterDetails').datagrid('getRows');
+        for (var i = 0; i < objList.length; i++) {
+            if (objList[i].BusinessUnitID == $('#cboWinBusinessUnits').val() && $('#tblBankDepositMasterDetails').datagrid("getSelected").BusinessUnitID != $('#cboWinBusinessUnits').val()) {
+                MSWAL('Warning!', 'Duplicate Project Name !!', 'error');
+                return;
+            }
+        }
+        MUpdateDataGrid('tblBankDepositMasterDetails', MakeObjectChild(), -1);
+        UpdateChildGrid();
+        $('#winEdit').window('close');
+    });
+    $('#btnWinClose').click(function (e) {
+        $('#winEdit').window('close');
+    });
+    function MakeObjectChild() {
+        var obj = $('#tblBankDepositMasterDetails').datagrid("getSelected");
+        obj.BusinessUnitID = $('#cboWinBusinessUnits').val();
+        obj.BusinessUnitName = $("#cboWinBusinessUnits option:selected").text();
+        obj.DepositAmount = $('#txtWinDepositAmount').val();
+        obj.Remarks = $('#txtWinGridRemarks').val();
+        return obj;
+    }
+</script>
+
+
+
+
+
+
+

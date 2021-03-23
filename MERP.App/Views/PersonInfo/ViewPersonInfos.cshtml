@@ -1,0 +1,122 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblPersonInfos" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'PersonName', width:250, align:'left'">Person</th>
+                <th data-options="field:'Mobile', width:250, align:'left'">Mobile</th>
+                <th data-options="field:'Address', width:250, align:'left'">Address</th>
+                <th data-options="field:'PersonTypeSt', width:250, align:'left'">Person Type</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<div id="winEdit" class="easyui-window" title="Person Information" data-options="modal:true,closed:true,border:'thin',cls:'c1'" style="width:400px; height:480px; padding:20px">
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <input type="hidden" id="txtPersonID">
+            <label for="txtPersonName">Person Name</label>
+            <input type="text" class="form-control col-md-12" id="txtPersonName">
+        </div>
+        <div class="form-group col-md-12">
+            <label for="txtMobile">Mobile</label>
+            <input type="text" class="form-control col-md-12" id="txtMobile">
+        </div>
+        <div class="form-group col-md-12">
+            <label for="txtAddress">Address</label>
+            <input type="text" class="form-control col-md-12" id="txtAddress">
+        </div>
+        <div class="form-group col-md-12">
+            <label for="cboPersonType">Person Type</label>
+            <select class="form-control col-md-12" id="cboPersonType"></select>
+        </div>
+    </div>
+    <div class="form-group col-md-12 ActionButton">
+        <button id="btnWinSave" type="button" class="btn btn-success ActionButton" style="float:right" aria-label="Left Align">Save</button>
+        <button id="btnWinClose" type="button" class="btn btn-danger ActionButton" style="float:right" aria-label="Left Align">Close</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oPersonInfos = [];
+    var _oPersonTypes = [];
+    $(document).ready(function () {
+        SetPageHeader('Person Setup');
+        _oPersonInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.PersonInfos));
+        _oPersonTypes = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.PersonTypes));
+        MLoadDataGrid('tblPersonInfos', _oPersonInfos, 'Person List', 100, 'cboPagination');
+        MLoadComboBox('cboPersonType', _oPersonTypes)
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblPersonInfos', _oPersonInfos, 100, 'cboPagination');
+    });
+    $('#btnAdd').click(function (e) {
+        MWinPickerOpen(1, 'tblPersonInfos', 'winEdit', 'RefreshWinObject');
+    });
+    $('#btnEdit').click(function (e) {
+        MWinPickerOpen(2, 'tblPersonInfos', 'winEdit', 'RefreshWinObject');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblPersonInfos', 'PersonInfo', 'Delete');
+    });
+    $('#btnWinClose').click(function (e) {
+        $('#winEdit').window('close');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            MSearch('tblPersonInfos', 'txtSearch', 'PersonInfo', 'Search');     // only for Enter Press
+        }
+    });
+    $("#btnWinSave").click(function () {
+        MWinPickerSave(MakeObject().PersonID, MakeObject(), 'PersonInfo', 'Save', 'tblPersonInfos','winEdit','')
+    });
+    function RefreshWinObject(obj) {
+        $('#winEdit').window('open');
+        if (obj == null) {
+            $('#txtPersonID').val(0);
+            $('#txtPersonName').val("");
+            $('#txtMobile').val("");
+            $('#txtAddress').val("");
+            $('#cboPersonType').val(0);
+        }
+        else {
+            $('#txtPersonID').val(obj.PersonID);
+            $('#txtPersonName').val(obj.PersonName);
+            $('#txtMobile').val(obj.Mobile);
+            $('#txtAddress').val(obj.Address);
+            $('#cboPersonType').val(obj.PersonType);
+        }
+    }
+    function MakeObject() {
+        var obj = {
+            PersonID: $('#txtPersonID').val(),
+            PersonName:$('#txtPersonName').val(),
+            Mobile: $('#txtMobile').val(),
+            Address: $('#txtAddress').val(),
+            PersonType: parseInt($('#cboPersonType').val()),
+        }
+        return obj;
+    }
+</script>
+
+
+
+
+
+

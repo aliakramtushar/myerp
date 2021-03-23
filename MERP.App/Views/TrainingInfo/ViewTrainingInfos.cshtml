@@ -1,0 +1,66 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblTrainingInfos" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'TrainingCode', width:180, align:'center'">Training Code</th>
+                <th data-options="field:'TrainingName', width:300, align:'left'">Training / Course Name</th>
+                <th data-options="field:'TrainingTypeSt', width:200, align:'center'">Type</th>
+                <th data-options="field:'DurationInMonth', width:120, align:'center'">Duration(m)</th>
+                <th data-options="field:'ActivityStatusSt', width:120, align:'center'">Status</th>
+                <th data-options="field:'AmountSt', width:120, align:'center'">Fees</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oTrainingInfos = [];
+    $(document).ready(function () {
+        debugger;
+        SetPageHeader('Training List');
+        _oTrainingInfos = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.TrainingInfos));
+        MLoadDataGrid('tblTrainingInfos', _oTrainingInfos, 'TrainingInfo List', 100, 'cboPagination');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblTrainingInfos', _oTrainingInfos, 100, 'cboPagination');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblTrainingInfos', 'TrainingInfo', 'ViewTrainingInfo');
+    });
+    $('#btnEdit').click(function (e) {
+        MEdit('tblTrainingInfos', 'TrainingInfo', 'ViewTrainingInfo');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblTrainingInfos', 'TrainingInfo', 'Delete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblTrainingInfos', 'txtSearch', 'TrainingInfo', 'Search');     // only for Enter Press
+        }
+    });
+
+</script>
+
+
+
+
+
+

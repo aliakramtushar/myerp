@@ -1,0 +1,55 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblStoreProductHistorys" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'DateAddedSt', width:100, align:'center'">Date</th>
+                <th data-options="field:'DBOperationIDSt', width:100, align:'center'">Operation</th>
+                <th data-options="field:'StoreName', width:180, align:'left'">Store Name</th>
+                <th data-options="field:'ProductName', width:300, align:'left'">Product Name</th>
+                <th data-options="field:'SupplierName', width:150, align:'left'">Supplier Name</th>
+                <th data-options="field:'TransitStoreName', width:180, align:'left'">Transit Store Name</th>
+                <th data-options="field:'ProductOldQty', width:100, align:'right'">Previous Qty</th>
+                <th data-options="field:'ProductNewQty', width:100, align:'right'">New Qty</th>
+                <th data-options="field:'Remarks', width:180, align:'left'">Remarks</th>
+                <th data-options="field:'AddedBy', width:120, align:'left'">Added By</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oStoreProductHistorys = [];
+    $(document).ready(function () {
+        SetPageHeader('History');
+        _oStoreProductHistorys = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.StoreProductHistorys));
+        MLoadDataGrid('tblStoreProductHistorys', _oStoreProductHistorys, 'History', 500, 'cboPagination');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblStoreProductHistorys', _oStoreProductHistorys, 500, 'cboPagination');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            MSearch('tblStoreProductHistorys', 'txtSearch', 'StoreProductHistory', 'Search');     // only for Enter Press
+        }
+    });
+</script>
+
+
+
+
+
+

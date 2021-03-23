@@ -1,0 +1,190 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblTreeMenus" title="" class="easyui-treegrid"
+           data-options="
+           idField:'id',
+           treeField:'text', 
+           animate:false,
+           lines: true,
+           onDblClickRow:function (rowIndex, rowData){$('#tblTreeMenus').treegrid('toggle', rowIndex.id)},
+           toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th field="text" width="280">Menu Name</th>
+                <th field="ControllerName" width="200">Controller Name</th>
+                <th field="ActionName" width="260">Action Name</th>
+                <th field="MenuSequence" width="80" align="center">Sequence</th>
+                <th field="ActivityStatusSt" width="200" align="center">Activity Status</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a id="btnReload" class="easyui-linkbutton" onclick="PageReload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <a id="btnMove" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-move'">Move</a>
+            <a id="btnMoveHere" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-ok'">Move Here</a>
+        </div>
+    </div>
+</div>
+<div id="winMenu" class="easyui-window" title="Menu Description" data-options="modal:true,closed:true,border:'thin',cls:'c6'" style="width:900px; height:310px; padding:20px">
+    <div class="form-row col-md-12">
+        <input type="text" id="txtMenuID" hidden />
+        <input type="text" id="txtParentID" hidden />
+        <div class="form-group col-md-4">
+            <label for="txtMenuName" style="font-weight:bold">Menu Name</label>
+            <input type="text" id="txtMenuName" class="form-control-sm col-md-12" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="txtControllerName" style="font-weight:bold">Controller Name</label>
+            <input type="text" id="txtControllerName" class="form-control-sm col-md-12" />
+        </div>
+        <div class="form-group col-md-4">
+            <label for="txtActionName" style="font-weight:bold">Action Name</label>
+            <input type="text" id="txtActionName" class="form-control-sm col-md-12">
+        </div>
+    </div>
+    <div class="form-row col-md-12">
+        <div class="form-group col-md-7">
+            <label for="txtRemarks" style="font-weight:bold">Remarks</label>
+            <input type="text" id="txtRemarks" class="form-control-sm col-md-12" />
+        </div>
+        <div class="form-group col-md-3">
+            <label for="cboActivityStatus" style="font-weight:bold">Activity Status</label>
+            <select id="cboActivityStatus" class="form-control col-md-12" style="height:33px;padding:0px 10px"></select>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtSequence" style="font-weight:bold">Sequence</label>
+            <input class="easyui-numberspinner" id="txtSequence" data-options="spinAlign:'horizontal',min:0,max:100,editable:false" style="width:100%;text-align:center">
+            @*<input type="number" id="txtSequence" class="form-control-sm col-md-12">*@
+        </div>
+    </div>
+    <div class="form-group col-md-12 ActionButton">
+        <button id="btnWinClose" type="button" class="btn btn-danger ActionButton" style="float:right" aria-label="Left Align">Close</button>
+        <button id="btnWinUpdate" type="button" class="btn btn-success ActionButton" style="float:right" aria-label="Left Align">Update</button>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oMenus = [];
+    var _oActivityStatus = [];
+    var _objMenu = [];
+    $(document).ready(function () {
+        debugger;
+        _oMenus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Menus));
+        _oActivityStatus = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.ActivityStatus));
+        MLoadTreeGrid('tblTreeMenus', _oMenus);
+        SetPageHeader('Menu Setup');
+        $('#btnMoveHere').hide();
+    });
+    function PageReload() {
+        window.location.reload();
+    }
+    $('#btnAdd').click(function (e) {
+        MWinTreeAddOrEdit('tblTreeMenus', 'winMenu', ClearWinMenu);
+    });
+    function ClearWinMenu(obj) {
+        $('#txtMenuID').val(0);
+        $('#txtParentID').val(obj.id);
+        $('#txtMenuName').val('');
+        $('#txtSequence').numberspinner('setValue', 0);
+        $('#txtControllerName').val('');
+        $('#txtActionName').val('');
+        $('#txtRemarks').val('');
+        MLoadComboBox('cboActivityStatus', _oActivityStatus);
+    }
+    $('#btnEdit').click(function (e) {
+        MWinTreeAddOrEdit('tblTreeMenus', 'winMenu', RefreshWinMenu);
+    });
+    $('#btnMove').click(function (e) {
+        //MWinTreeAddOrEdit('tblTreeMenus', 'winMenu', RefreshWinMenu);
+    });
+    function RefreshWinMenu(obj) {
+        debugger;
+        $('#txtMenuID').val(obj.id);
+        $('#txtParentID').val(obj.parentid);
+        $('#txtMenuName').val(obj.text);
+        $('#txtSequence').numberspinner('setValue', obj.MenuSequence);
+        $('#txtControllerName').val(obj.ControllerName);
+        $('#txtActionName').val(obj.ActionName);
+        $('#txtRemarks').val(obj.Remarks);
+        MLoadComboBox('cboActivityStatus', _oActivityStatus);
+        $('#cboActivityStatus').val(parseInt(obj.ActivityStatus));
+    }
+    $("#btnDelete").click(function () {
+        MWinTreeDelete('tblTreeMenus', 'Menu', 'Delete', '');
+    });
+    $('#btnWinClose').click(function (e) {
+        $('#winMenu').window('close');
+    });
+    $('#btnWinUpdate').click(function (e) {
+        if ($('#txtMenuName').val() == '') {
+            MSWAL('Error', 'Please Enter Menu Name !!', 'error');
+            return;
+        }
+        if ($('#txtControllerName').val() == '') {
+            MSWAL('Error', 'Please Controller Menu Name !!', 'error');
+            return;
+        }
+        if ($('#txtActionName').val() == '') {
+            MSWAL('Error', 'Please Action Name !!', 'error');
+            return;
+        }
+        debugger;
+        var objMenu = {
+            MenuID: $('#txtMenuID').val(),
+            ParentID: $('#txtParentID').val(),
+            MenuName: $('#txtMenuName').val(),
+            MenuSequence: $('#txtSequence').numberspinner('getValue'),
+            ControllerName: $('#txtControllerName').val(),
+            ActionName: $('#txtActionName').val(),
+            Remarks: $('#txtRemarks').val(),
+            ActivityStatus: $('#cboActivityStatus').val(),
+        }
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/Menu/Save",
+            traditional: true,
+            data: JSON.stringify(objMenu),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                debugger;
+                var retObj = jQuery.parseJSON(data);
+                if (retObj != null && retObj.MenuID > 0) {
+                    
+                    retObj.text = retObj.MenuName;
+                    if (parseInt($('#txtMenuID').val()) > 0) {
+                        $('#tblTreeMenus').treegrid('update', { id: parseInt($('#txtMenuID').val()), row: retObj });
+                        MSWAL('Updated', 'Data Updated Successfully!!', 'success');
+                    }
+                    else {
+                        MSWAL('Saved Successfully', 'Please Reload to see the added data !!', 'success');
+                    }
+                }
+                else {
+                    MSWAL('Error', retObj.ErrorMessage, 'error');
+                }
+            },
+            error: function (xhr, status, error) {
+                MSWAL('Error', error, 'error');
+            }
+        });
+        $('#winMenu').window('close');
+    });
+    $("#txtSearch").keyup(function (e) {
+        if (e.keyCode == 13) {
+            MSearch('tblMenus', 'txtSearch', 'Menu', 'Search');     // only for Enter Press
+        }
+    });
+</script>
+
+
+
+
+
+

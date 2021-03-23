@@ -1,0 +1,67 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblBankAccountMappings" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'BankName', width:220, align:'left'">Bank Name</th>
+                <th data-options="field:'BankBranchName', width:130, align:'center'">Branch Name</th>
+                <th data-options="field:'BankAccountName', width:200, align:'center'">Account Name</th>
+                <th data-options="field:'BankAccountNo', width:180, align:'center'">Bank Account No</th>
+                <th data-options="field:'IsActiveSt', width:80, align:'center'">Activity</th>
+                <th data-options="field:'Remarks', width:220, align:'left'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <a class="easyui-linkbutton" onclick="location.reload()" data-options="plain:true,iconCls:'icon-reload'"></a>
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+            <select id="cboPagination" style="float:right; height:30px"></select>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oBankAccountMappings = [];
+    $(document).ready(function () {
+        debugger;
+        SetPageHeader('Bank Account List');
+        _oBankAccountMappings = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.BankAccountMappings));
+        MLoadDataGrid('tblBankAccountMappings', _oBankAccountMappings, 'BankAccountMapping List', 100, 'cboPagination');
+    });
+    $("#cboPagination").change(function () {
+        MPaginationPageLoad('tblBankAccountMappings', _oBankAccountMappings, 100, 'cboPagination');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblBankAccountMappings', 'BankAccountMapping', 'ViewBankAccountMapping');
+    });
+    $('#btnEdit').click(function (e) {
+        debugger;
+        MEdit('tblBankAccountMappings', 'BankAccountMapping', 'ViewBankAccountMapping');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblBankAccountMappings', 'BankAccountMapping', 'Delete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblBankAccountMappings', 'txtSearch', 'BankAccountMapping', 'Search');     // only for Enter Press
+        }
+    });
+
+</script>
+
+
+
+
+
+

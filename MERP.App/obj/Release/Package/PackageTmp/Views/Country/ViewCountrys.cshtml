@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <table id="tblCountrys" class="easyui-datagrid" style="width:100%"
+           data-options="
+    rownumbers:true,
+    singleSelect:true,
+    collapsible:false,
+    toolbar:'#toolbar'">
+        <thead>
+            <tr>
+                <th data-options="field:'CountryName', width:300, align:'left'">Country Name</th>
+                <th data-options="field:'ContinentName', width:200, align:'left'">Continent Name</th>
+                <th data-options="field:'ActivityStatusSt', width:150, align:'center'">Status</th>
+                <th data-options="field:'Remarks', width:150, align:'left'">Remarks</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar">
+        <div class="easyui-panel" style="width:100%">
+            <input type="text" id="txtSearch" class="form-control-sm MSearchBox" placeholder="Type and Enter">
+            <a id="btnAdd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">New</a>
+            <a id="btnEdit" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-edit'">Edit</a>
+            <a id="btnDelete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'">Delete</a>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var _oCountrys = [];
+    $(document).ready(function () {
+        debugger;
+        _oCountrys = @Html.Raw(new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(ViewBag.Countrys));
+        MLoadDataGrid('tblCountrys', _oCountrys, 'Country List', 100, 'cboPagination');
+        SetPageHeader('Country Setup');
+    });
+    $('#btnAdd').click(function (e) {
+        MAdd('tblCountrys', 'Country', 'ViewCountry');
+    });
+    $('#btnEdit').click(function (e) {
+        MEdit('tblCountrys', 'Country', 'ViewCountry');
+    })
+    $("#btnDelete").click(function () {
+        MDelete('tblCountrys', 'Country', 'Delete');
+    });
+    $("#txtSearch").keyup(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            MSearch('tblCountrys', 'txtSearch', 'Country', 'Search');     // only for Enter Press
+        }
+    });
+</script>
+
+
+
+
+
+
